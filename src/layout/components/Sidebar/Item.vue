@@ -51,8 +51,8 @@ export default {
     font-size: 50px;
     .svg{
       position: absolute;
-    left: -5px;
-    top: -10px;
+    left: -4px;
+    top: -13px;
     width: 50px;
     height: 41px;
     margin: 0;
