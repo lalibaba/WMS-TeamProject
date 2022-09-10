@@ -267,6 +267,9 @@ $light_gray: #000;
       // padding: 160px 35px 0;
       // margin: 0 auto;
       overflow: hidden;
+      .el-input{
+        width: 82%;
+      }
     }
   }
 
@@ -288,6 +291,9 @@ $light_gray: #000;
     color: $dark_gray;
     vertical-align: middle;
     display: inline-block;
+        position: absolute;
+    top: 0px;
+    left: 235px;
   }
 
   .title-container {
