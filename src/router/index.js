@@ -45,6 +45,12 @@ export const constantRoutes = [
         meta: { title: '仓库管理' }
       },
       {
+        path: 'warehouse/details/:id',
+        component: () => import('@/views/baseInfo/warehouse/components/ChangeWarehouse'),
+        hidden: true,
+        meta: { title: '新增仓库' }
+      },
+      {
         path: 'area',
         name: 'area',
         component: () => import('@/views/baseInfo/area/index'),
