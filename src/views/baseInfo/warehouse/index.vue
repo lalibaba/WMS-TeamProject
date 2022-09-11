@@ -45,10 +45,10 @@
         <el-table-column label="更新时间" width="200" prop="updateTime" />
         <el-table-column label="操作" width="180" fixed="right">
           <template slot-scope="{row}">
-            <el-button type="text" size="small">编辑</el-button>
-            <el-button v-if="row.status==='停用'" type="text" size="small">启用</el-button>
-            <el-button v-else type="text" size="small">停用</el-button>
-            <el-button type="text" size="small">删除</el-button>
+            <el-button type="text" size="small" @click="$router.push({path: `/baseinfo/warehouse/details/${row.id}`})">编辑</el-button>
+            <el-button v-if="row.status==='停用'" type="text" size="small" @click="useChange(row)">启用</el-button>
+            <el-button v-else type="text" size="small" @click="useChange(row)">停用</el-button>
+            <el-button type="text" size="small" @click="deleteWare(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -66,13 +66,20 @@
         />
       </el-row>
     </div>
+
+    <StopRun ref="stopRun" :dialog-visible.sync="useShow" @confirm="confirmChange" />
+    <StopRun ref="delete" :dialog-visible.sync="deleteShow" @confirm="confirmDelete" />
   </div>
 </template>
 
 <script>
-import { getWareHouseList } from '@/api/baseInfo'
+import { getWareHouseList, changeNewWarehouse, delWarehouse } from '@/api/baseInfo'
 import { warehouseStatus, warehouseType } from '@/api/constant/warehouse'
+import StopRun from '@/components/StopRun'
 export default {
+  components: {
+    StopRun
+  },
   data() {
     return {
       wareHouseData: {
@@ -87,7 +94,13 @@ export default {
         size: 10,
         descs: 'createTime'
       },
-      warehouseStatus: warehouseStatus
+      warehouseStatus: warehouseStatus,
+      useShow: false,
+      // 修改仓库状态需要的信息
+      changeWareHouseStatus: {},
+      // 删除确认弹窗
+      deleteShow: false,
+      delWareId: null
     }
   },
   mounted() {
@@ -115,6 +128,48 @@ export default {
     add(row) {
       console.log(row)
     },
+    // 启用或者停用仓库
+    useChange(row) {
+      let status = ''
+      if (row.status === '启用') {
+        status = '停用'
+      } else {
+        status = '启用'
+      }
+      warehouseStatus.forEach((item) => {
+        if (status === item.name) {
+          this.changeWareHouseStatus.status = item.status
+        }
+      })
+      this.changeWareHouseStatus.id = row.id
+      this.$refs.stopRun.changeName(status, row.name)
+      this.useShow = true
+    },
+    // 改变仓库状态
+    async confirmChange() {
+      try {
+        await changeNewWarehouse(this.changeWareHouseStatus)
+        this.getWareHouseList()
+        this.$message.success('状态改变成功')
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    // 删除仓库
+    async deleteWare(row) {
+      this.delWareId = row.id
+      this.$refs.delete.changeName('删除', row.name)
+      this.deleteShow = true
+    },
+    async confirmDelete() {
+      try {
+        await delWarehouse({ 'ids[]': this.delWareId })
+        this.getWareHouseList()
+        this.$message.success('删除成功')
+      } catch (e) {
+        console.log(e)
+      }
+    },
     processData(data) {
       data.forEach((ele) => {
         warehouseStatus.forEach((item) => {
@@ -138,6 +193,7 @@ export default {
 .app-card{
     height:127px;
     padding:30px;
+    padding-left: 15px;
     border-radius: 12px;
     margin-bottom: 20px;
     box-shadow: 0 0 6px 0 rgb(144 142 142 / 17%);
@@ -226,6 +282,15 @@ export default {
     border-radius: 12px;
     box-shadow: 0 0 6px 0 rgb(144 142 142 / 17%);
     box-sizing: border-box;
+    .el-table th{
+          padding: 10px 0;
+        }
+    .el-table td{
+      padding: 5.5px 0;
+    }
+    .el-table__header-wrapper{
+      height: 45px;
+    }
     .el-table__row--striped{
      td{
        background-color: #FDFCF9 !important;
@@ -253,17 +318,20 @@ export default {
         }
     }
     .my-table-header{
-        color: #887e7e;
         font-weight: 500;
         background-color: rgb(249, 246, 238);
         height: 44px;
         th{
             background-color: unset;
         }
+        .cell{
+          color: #887e7e;
+        }
     }
     .cell{
         text-align: center;
         font-size: 13px;
+        color: #332929;
     }
     .my-pagination{
       padding-top:18px;
