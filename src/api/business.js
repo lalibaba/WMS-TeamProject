@@ -9,3 +9,24 @@ export function getownerList(params) {
     params
   })
 }
+/**
+ *
+ *  新增货主管理
+ */
+export function addowner(data) {
+  return request({
+    url: '/owner',
+    method: 'POST',
+    data
+  })
+}
+/**
+ *
+ *  获取下一个编码
+ */
+export function nextCode(name) {
+  return request({
+    url: `/codeFactory/next/${name}`
+  })
+}
+

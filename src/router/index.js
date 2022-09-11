@@ -88,12 +88,23 @@ export const constantRoutes = [
         name: 'goodsOwner',
         component: () => import('@/views/business/goodsOwner/index'),
         meta: { title: '货主管理' }
+        // children: [
+        //   {
+        //   }
+        // ]
       },
       {
         path: 'taskPicking',
         name: 'taskPicking',
         component: () => import('@/views/business/taskPicking/index'),
         meta: { title: '货运商管理' }
+      },
+      {
+        hidden: true,
+        path: 'goodsOwner/details',
+        name: 'goodsOwnerdetails',
+        component: () => import('@/views/business/details/index.vue'),
+        meta: { title: '新增货主' }
       }
     ]
   },
