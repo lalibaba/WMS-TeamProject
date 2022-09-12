@@ -131,6 +131,16 @@ export const constantRoutes = [
         component: () => import('@/views/storage/latestStorage/index'),
         name: 'latestStorage',
         meta: { title: '实时库存' }
+      },
+      {
+        path: 'one',
+        name: 'one',
+        component: () => import('@/views/storage/one/index'),
+        hidden: true,
+        meta: {
+          // title: 'one'
+          // hiddenSiderbar: false// 隐藏侧边栏
+        }
       }
     ]
   },
