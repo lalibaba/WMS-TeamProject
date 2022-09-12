@@ -11,17 +11,19 @@
 
 // 禁用递归函数
 export function digui(arr) {
-  return arr.map(ele => {
-    if (ele['ownerId']) {
+  const Arr = []
+  arr.forEach(ele => {
+    if (ele['ownerId'] || ele.ownerId == null) {
       ele['disable'] = true
     } else {
       ele['disable'] = false
     }
-    if (ele['children']) {
-      digui(ele['children'])
+    if (ele.children) {
+      digui(ele.children)
     }
-    return ele
+    Arr.push(ele)
   })
+  return Arr
 }
 
 export function parseTime(time, cFormat) {

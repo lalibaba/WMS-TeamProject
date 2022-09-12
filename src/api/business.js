@@ -81,4 +81,13 @@ export function delOwnerLocation(params) {
     params
   })
 }
+/**
+ *
+ * 查询货主管理明细
+ */
+export function getOwnerDetail(id) {
+  return request({
+    url: `/owner/detail/${id}`
+  })
+}
 

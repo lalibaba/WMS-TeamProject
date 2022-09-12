@@ -247,8 +247,8 @@ export default {
           }
         })
       })
-      this.options = digui(this.options)
-      console.log(this.options)
+      // this.options = digui(this.options)
+      // console.log(this.options)
     }
 
   }
