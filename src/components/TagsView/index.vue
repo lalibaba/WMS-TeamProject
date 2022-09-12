@@ -1,22 +1,26 @@
 <template>
   <div id="tags-view-container" class="tags-view-container">
-    <router-link
-      v-for="tag in visitedViews"
-      ref="tag"
-      :key="tag.path"
-      :class="isActive(tag)?'active':''"
-      :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
-      tag="span"
-      class="tags-view-item"
-      @click.middle.native="!isAffix(tag)?closeSelectedTag(tag):''"
-      @contextmenu.prevent.native="openMenu(tag,$event)"
-    >
-      <!-- 多语言设置 -->
-      {{ tag.meta.title }}
-      <!-- {{ $t('route.'+tag.name) }} -->
-      <span v-if="!isAffix(tag)&&tag.name!=='Dashboard'" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
+    <scroll-pane ref="scrollPane" class="tags-view-wrapper" @scroll="handleScroll">
 
-    </router-link>
+      <router-link
+        v-for="tag in visitedViews"
+        ref="tag"
+        :key="tag.path"
+        :class="isActive(tag)?'active':''"
+        :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
+        tag="span"
+        class="tags-view-item"
+        @click.middle.native="!isAffix(tag)?closeSelectedTag(tag):''"
+        @contextmenu.prevent.native="openMenu(tag,$event)"
+      >
+        <!-- 多语言设置 -->
+        {{ tag.meta.title }}
+        <!-- {{ $t('route.'+tag.name) }} -->
+        <span v-if="!isAffix(tag)&&tag.name!=='Dashboard'" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
+
+      </router-link>
+    </scroll-pane>
+
     <div class="divDropDown">
       <el-dropdown>
         <span class="el-dropdown-link">
@@ -41,9 +45,11 @@
 
 <script>
 import path from 'path'
+import ScrollPane from './ScrollPane'
 
 export default {
   name: 'TagsView',
+  components: { ScrollPane },
   data() {
     return {
       visible: false,
@@ -135,7 +141,7 @@ export default {
       this.$nextTick(() => {
         for (const tag of tags) {
           if (tag.to.path === this.$route.path) {
-            // this.$refs.scrollPane.moveToTarget(tag)
+            this.$refs.scrollPane.moveToTarget(tag)
             // when query is different then update
             if (tag.to.fullPath !== this.$route.fullPath) {
               this.$store.dispatch('tagsView/updateVisitedView', this.$route)
@@ -211,8 +217,10 @@ export default {
     },
     closeMenu() {
       this.visible = false
+    },
+    handleScroll() {
+      this.closeMenu()
     }
-
   }
 }
 </script>
@@ -223,6 +231,7 @@ export default {
   width: 100%;
   background: #f5f1f1;
   padding: 10px 10px;
+  padding-right: 65px;
   // border-bottom: 1px solid #d8dce5;
   // box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
   // .tags-view-wrapper {
@@ -292,7 +301,7 @@ export default {
 <style lang="scss">
 .divDropDown {
   position: absolute;
-    top: 15px;
+    top: 14px;
     right: 24px;
     width: 36px;
     height: 36px;

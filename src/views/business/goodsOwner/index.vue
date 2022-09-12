@@ -141,7 +141,7 @@ export default {
       this.$router.push('/business/goodsOwner/details')
     },
     handleClick(row) {
-      console.log(row)
+      this.$router.push('/business/goodsOwner/details/' + row.id)
     },
     // 提交搜索
     onSubmit() {

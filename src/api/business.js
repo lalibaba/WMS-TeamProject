@@ -29,4 +29,56 @@ export function nextCode(name) {
     url: `/codeFactory/next/${name}`
   })
 }
+/**
+ *
+ *  分页查询货主-库位关联表 详细
+ */
+export function getPageDetail(params) {
+  return request({
+    url: '/ownerLocation/pageDetail',
+    params
+  })
+}
+/**
+ *
+ *  查询全部仓库status=1
+ */
+export function getAllWarehouse(params) {
+  return request({
+    url: '/warehouse/list',
+    params
+  })
+}
+/**
+ *
+ * 查询库区库位树 id=xxx
+ */
+export function getAreatree(params) {
+  return request({
+    url: '/area/tree',
+    params
+  })
+}
+/**
+ *
+ * 货主批量关联库位
+ */
+export function postBatch(data) {
+  return request({
+    url: '/ownerLocation/batch',
+    method: 'post',
+    data
+  })
+}
+/**
+ *
+ * 货主批量关联库位
+ */
+export function delOwnerLocation(params) {
+  return request({
+    url: '/ownerLocation',
+    method: 'delete',
+    params
+  })
+}
 

@@ -14,6 +14,9 @@ import router from './router'
 import components from '@/components'
 import '@/icons' // icon
 import '@/permission' // permission control
+
+import Plugin from 'v-fit-columns'
+Vue.use(Plugin)
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

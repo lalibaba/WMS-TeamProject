@@ -105,6 +105,13 @@ export const constantRoutes = [
         name: 'goodsOwnerdetails',
         component: () => import('@/views/business/details/index.vue'),
         meta: { title: '新增货主' }
+      },
+      {
+        hidden: true,
+        path: 'goodsOwner/details/:id',
+        name: 'Ownerdetails',
+        component: () => import('@/views/business/details2/index.vue'),
+        meta: { title: '货主详情' }
       }
     ]
   },
