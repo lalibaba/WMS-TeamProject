@@ -249,7 +249,6 @@ export default {
     async getgoodspageDetail() {
       const res = await getgoodspageDetail({ ...this.goodsdetails })
       this.goodslist = res.records
-      console.log(this.goodslist)
     },
     searchfn(value) {
       this.goodsdetails.goods = value
@@ -257,7 +256,7 @@ export default {
     },
     async receiptListpageDetail(id) {
       const res = await receiptListpageDetail({ masterId: id })
-      console.log(res)
+      // console.log(res)
     }
   }
 }

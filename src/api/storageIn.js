@@ -80,3 +80,11 @@ export function receiptListbatch(data) {
     data
   })
 }
+
+// 查询详细
+export function receiptdetail(id) {
+  return request({
+    url: `/receipt/detail/${id}`,
+    baseurl: process.env.VUE_APP_BASE_IPS
+  })
+}

@@ -98,7 +98,7 @@
               width="250"
             >
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="handleClick(scope.row)">查看详细</el-button>
+                <el-button type="text" size="small" @click="handleClick(scope.row.id)">查看详细</el-button>
               </template>
             </el-table-column>
           </template>
@@ -115,7 +115,8 @@
 import search from '@/components/storageIn/search'
 import tablecomponent from '@/components/storageIn/table1'
 import mypage1 from '@/components/storageIn/mypage1'
-import { getstorageinlist } from '@/api/storageIn'
+import { getstorageinlist, receiptdetail } from '@/api/storageIn'
+import status from '@/api/storageIns/storageIn'
 export default {
   name: 'StorageInList',
   components: {
@@ -139,6 +140,7 @@ export default {
     }
   },
   created() {
+    // console.log(status)
     this.getstorageinlist()
   },
   methods: {
@@ -158,7 +160,10 @@ export default {
       this.$router.push('/storageIn/storageInList/details')
     },
     // 查看详细
-    handleClick() {
+    async handleClick(id) {
+      const res = await receiptdetail(id)
+      this.$store.dispatch('storageIn/viewdetails', res)
+      console.log(res)
       this.$router.push('/storageIn/storageInList/list-details')
     },
     searchfn(value) {
@@ -170,7 +175,6 @@ export default {
     currentpagefn(val) {
       this.options.current = val
       this.getstorageinlist()
-      console.log(val)
     }
   }
 }
