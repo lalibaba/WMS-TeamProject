@@ -192,8 +192,22 @@ export const constantRoutes = [
         component: () => import('@/views/storageOut/manageTaskTransfer/index'),
         name: 'manageTaskTransfer',
         meta: { title: '交接任务' }
+      },
+      {
+        path: 'Added',
+        component: () => import('@/views/storageOut/listOut/components/Added.vue'),
+        name: 'Added'
+      },
+      {
+        path: 'viewDetails',
+        component: () => import('@/views/storageOut/listOut/components/viewDetails.vue'),
+        name: 'viewDetails'
+      },
+      {
+        path: 'viewDeta',
+        component: () => import('@/views/storageOut/taskPicking/components/viewDeta.vue'),
+        name: 'viewDeta'
       }
-
     ]
   },
 

@@ -23,56 +23,48 @@
           <el-table-column
             prop="date"
             label="货品条码"
-            width="160"
+            width="80"
             align="center"
           />
           <el-table-column
             prop="name"
             label="货品名称"
-            width="160"
+            width="180"
             align="center"
           />
           <el-table-column
             prop="address"
             label="货品类型"
-            width="160"
+            width="150"
             align="center"
           />
           <el-table-column
             prop="address"
-            label="货主名称"
-            width="160"
+            label="库区"
+            width="180"
             align="center"
           />
           <el-table-column
             prop="sear"
-            label="货品数量"
-            width="160"
-            align="center"
-          />
-          <el-table-column
-            prop="qeir"
-            label="体积(m³)"
-            sortable
-            width="160"
-            align="center"
-          />
-          <el-table-column
-            prop="qeir"
-            label="单位"
+            label="库位"
             width="180"
             align="center"
-            sortable
           />
           <el-table-column
             prop="qeir"
-            label="可用库存"
-            width="160"
+            label="拣货数量"
+            width="100"
             align="center"
           />
           <el-table-column
             prop="qeir"
-            label="发货数量"
+            label="实拣数量"
+            width="130"
+            align="center"
+          />
+          <el-table-column
+            prop="qeir"
+            label="差异数"
             width="160"
             align="center"
           />
