@@ -22,7 +22,7 @@
 
     <!-- 仓库表格 -->
     <div class="my-table">
-      <button class="main-button">新增库区</button>
+      <button class="main-button" @click="$router.push({path: '/baseinfo/area/details/null'})">新增库区</button>
       <div class="func_btn">
         <button class="download-btn">下载库区模版</button>
         <button class="import-btn">导入库区信息</button>

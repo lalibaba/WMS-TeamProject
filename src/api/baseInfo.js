@@ -9,9 +9,9 @@ export const getWareHouseList = (params) => {
 }
 
 // 新增仓库前获取数据
-export const getWareHouseCode = () => {
+export const getWareHouseCode = (name) => {
   return request({
-    url: '/codeFactory/next/CK'
+    url: `/codeFactory/next/${name}`
   })
 }
 
@@ -49,10 +49,27 @@ export const getWareHouseDetail = (id) => {
   })
 }
 
+// 查询全部仓库
+export const searchWareHouse = (params) => {
+  return request({
+    url: '/warehouse/list',
+    params
+  })
+}
+
 // 分页查询库区
 export const getWareAreaList = (params) => {
   return request({
     url: '/area/pageDetail',
     params
+  })
+}
+
+// 新增库区
+export const addNewWareArea = (data) => {
+  return request({
+    url: '/area',
+    method: 'POST',
+    data
   })
 }

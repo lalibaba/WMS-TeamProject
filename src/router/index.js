@@ -57,6 +57,12 @@ export const constantRoutes = [
         meta: { title: '库区管理' }
       },
       {
+        path: 'area/details/:id',
+        component: () => import('@/views/baseInfo/area/components/ChangeArea'),
+        hidden: true,
+        meta: { title: '新增库区' }
+      },
+      {
         path: 'location',
         name: 'location',
         component: () => import('@/views/baseInfo/location/index'),
