@@ -41,6 +41,18 @@ module.exports = {
       '/api': {
         target: 'http://www-wms-java.itheima.net/', // 跨域请求的地址
         changeOrigin: true // 只有这个值为true的情况下 才表示开启跨域
+        // pathRewrite: {
+        //   // 重新路由  localhost:8888/api/login  => www.baidu.com/login
+        //   '^/api': '' // 假设我们想把 localhost:8888/api/login 变成www.baidu.com/api/login 就需要这么做
+        // }
+      },
+      '/ips': {
+        target: 'http://www-wms-java.itheima.net/', // 跨域请求的地址
+        changeOrigin: true // 只有这个值为true的情况下 才表示开启跨域
+        // pathRewrite: {
+        //   // 重新路由  localhost:8888/api/login  => www.baidu.com/login
+        //   '^/api': '' // 假设我们想把 localhost:8888/api/login 变成www.baidu.com/api/login 就需要这么做
+        // }
       }
     }
     // before: require('./mock/mock-server.js')

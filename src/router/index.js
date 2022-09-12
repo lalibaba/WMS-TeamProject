@@ -161,6 +161,26 @@ export const constantRoutes = [
         component: () => import('@/views/storageIn/taskAdd/index'),
         name: 'taskAdd',
         meta: { title: '上架任务' }
+      },
+      {
+        path: 'storageInList/details',
+        component: () => import('@/views/storageIn/storageInList/components/details.vue'),
+        name: 'details'
+      },
+      {
+        path: 'taskReceive/details',
+        component: () => import('@/views/storageIn/taskReceive/components/details.vue'),
+        name: 'details'
+      },
+      {
+        path: 'storageInList/list-details',
+        component: () => import('@/views/storageIn/storageInList/components/list-details.vue'),
+        name: 'list-details'
+      },
+      {
+        path: 'taskAdd/details',
+        component: () => import('@/views/storageIn/taskAdd/components/details.vue'),
+        name: 'details'
       }
 
     ]

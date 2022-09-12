@@ -9,7 +9,13 @@ const service = axios.create({
 })
 
 // 请求拦截器
-service.interceptors.request.use(config => config, error => {
+service.interceptors.request.use(config => {
+  console.log(config)
+  if (config.baseurl === process.env.VUE_APP_BASE_IPS) {
+    config.baseURL = process.env.VUE_APP_BASE_IPS
+  }
+  return config
+}, error => {
   return Promise.reject(error)
 })
 
