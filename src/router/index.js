@@ -69,6 +69,12 @@ export const constantRoutes = [
         meta: { title: '库位管理' }
       },
       {
+        path: 'location/details/:id',
+        component: () => import('@/views/baseInfo/location/components/ChangeWareLocation'),
+        hidden: true,
+        meta: { title: '新增库位' }
+      },
+      {
         path: 'locationView',
         name: 'locationView',
         component: () => import('@/views/baseInfo/locationView/index'),

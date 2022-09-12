@@ -99,6 +99,14 @@ export const delWareArea = (params) => {
   })
 }
 
+// 查询全部库区
+export const searchAllWareArea = (params) => {
+  return request({
+    url: '/area/list',
+    params
+  })
+}
+
 // 分页查询库位
 export const getWareLocationList = (params) => {
   return request({

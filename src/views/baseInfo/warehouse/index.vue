@@ -22,7 +22,7 @@
 
     <!-- 仓库表格 -->
     <div class="my-table">
-      <button class="main-button" @click="$router.push({path: '/baseinfo/warehouse/details/null'})">新增仓库</button>
+      <button class="main-button" @click="$router.push({path: '/baseInfo/warehouse/details/null'})">新增仓库</button>
 
       <el-table
         :data="tableData"
