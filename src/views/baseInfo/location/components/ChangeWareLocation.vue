@@ -6,7 +6,8 @@
           <el-col :span="6">
             <el-form-item label="库区" prop="location">
               <el-cascader
-                ref="local"
+                v-if="showE"
+                ref="cascader"
                 v-model="wareLocationData.location"
                 :props="props"
               />
@@ -18,7 +19,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="库位名称">
+            <el-form-item label="库位名称" prop="name">
               <el-input v-model="wareLocationData.name" />
             </el-form-item>
           </el-col>
@@ -47,7 +48,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="库区状态" prop="status">
+            <el-form-item label="停用状态" prop="status">
               <el-radio-group v-model="wareLocationData.status">
                 <el-radio label="1">启用</el-radio>
                 <el-radio label="0">停用</el-radio>
@@ -58,7 +59,7 @@
 
         <el-row>
           <el-col :span="6">
-            <el-form-item label="承载体积">
+            <el-form-item label="承载体积" prop="maxVolume">
               <el-input v-model="wareLocationData.maxVolume" placeholder="请输入"><template slot="append">m³</template></el-input>
             </el-form-item>
           </el-col>
@@ -120,7 +121,7 @@
         </el-row>
         <el-form-item class="mt-btn">
           <el-button round class="reset-btn" @click="$router.back()">返回</el-button>
-          <el-button round class="search-btn">提交</el-button>
+          <el-button round class="search-btn" @click="confirmSubmit">提交</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -129,7 +130,7 @@
 
 <script>
 import { wareAreaBearType, wareTemplateType, wareUserType } from '@/api/constant/warehouse'
-import { searchWareHouse, getWareHouseCode, searchAllWareArea } from '@/api/baseInfo'
+import { searchWareHouse, getWareHouseCode, searchAllWareArea, getWareLocationDetail, addNewWareLocation, changeNewWareLocation } from '@/api/baseInfo'
 export default {
   data() {
     return {
@@ -153,8 +154,16 @@ export default {
         useType: '',
         warehouseId: ''
       },
-      rules: {},
-      options: [],
+      showE: null,
+      rules: {
+        location: [{ required: true, message: '请选择库区', trigger: 'blur' }],
+        name: [{ required: true, message: '请输入库位名称', trigger: 'blur' }],
+        temperatureType: [{ required: true, message: '请选择温度类型', trigger: 'blur' }],
+        bearingType: [{ required: true, message: '请选择承重类型', trigger: 'blur' }],
+        useType: [{ required: true, message: '请选择用途属性', trigger: 'blur' }],
+        maxVolume: [{ required: true, message: '请选择用途属性', trigger: 'blur' }],
+        status: [{ required: true, message: '停用状态', trigger: 'blur' }]
+      },
       props: {
         value: 'id',
         label: 'name',
@@ -185,13 +194,37 @@ export default {
     // 判断是新增还是编辑修改
     if (this.$route.params.id !== 'null') {
       this.$route.meta.title = '编辑库位'
-    //   this.getWareAreaDetail(this.$route.params.id)
+      this.getWareLocationDetail(this.$route.params.id)
     } else {
       this.wareLocationData.code = await getWareHouseCode('KW')
     }
     this.$store.dispatch('tagsView/addView', this.$route)
   },
   methods: {
+    async getWareLocationDetail(id) {
+      const res = await getWareLocationDetail(id)
+      // 解决级联回显的bug
+      this.showE = false
+      setTimeout(() => {
+        this.showE = true
+      }, 5)
+      this.wareLocationData = res
+      this.wareLocationData.location = [res.warehouseId, res.areaId]
+      this.wareLocationData.status = res.status.toString()
+
+    //   this.$refs.cascader.panel.lazyLoad()
+    },
+    async confirmSubmit() {
+      try {
+        await this.$refs.wareLocationForm.validate()
+        this.$route.params.id !== 'null' ? await changeNewWareLocation(this.wareLocationData) : await addNewWareLocation(this.wareLocationData)
+        this.$message.success('恭喜你，提交成功')
+        this.$router.back()
+        this.$refs.wareLocationForm.resetField()
+      } catch (e) {
+        console.log(e)
+      }
+    }
   }
 }
 </script>

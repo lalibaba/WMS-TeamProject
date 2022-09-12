@@ -114,3 +114,37 @@ export const getWareLocationList = (params) => {
     params
   })
 }
+
+// 获取库位详情
+export const getWareLocationDetail = (id) => {
+  return request({
+    url: `/location/${id}`
+  })
+}
+
+// 新增库位
+export const addNewWareLocation = (data) => {
+  return request({
+    url: '/location',
+    method: 'POST',
+    data
+  })
+}
+
+// 修改库位
+export const changeNewWareLocation = (data) => {
+  return request({
+    url: '/location',
+    method: 'PUT',
+    data
+  })
+}
+
+// 删除库位
+export const delWareLocation = (params) => {
+  return request({
+    url: '/location',
+    method: 'DELETE',
+    params
+  })
+}
