@@ -28,8 +28,10 @@
             textAlign: 'center',
             height: '44px',
             background: '#f9f6ee',
+            padding:'0',
+            fontSize: '13px'
           }"
-          :cell-style="{height: '44px',textAlign: 'center',}"
+          :cell-style="{height: '44px',padding:'0',textAlign: 'center',}"
           @selection-change="handleSelectionChange"
         >
           <el-table-column
@@ -119,7 +121,7 @@
 
 <script>
 import { getAllWarehouse, getAreatree, postBatch, getPageDetail, delOwnerLocation } from '@/api'
-import { digui } from '@/utils'
+// import { digui } from '@/utils'
 export default {
   name: 'SetPoint',
   components: {

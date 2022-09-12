@@ -22,6 +22,17 @@ export function addowner(data) {
 }
 /**
  *
+ *  删除货主管理
+ */
+export function delOwner(params) {
+  return request({
+    url: '/owner',
+    method: 'delete',
+    params
+  })
+}
+/**
+ *
  *  获取下一个编码
  */
 export function nextCode(name) {

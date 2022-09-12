@@ -31,9 +31,10 @@
           textAlign: 'center',
           height: '44px',
           background: '#f9f6ee',
-          padding:'0'
+          padding:'0',
+          fontSize: '13px'
         }"
-        :cell-style="{height: '44px',padding:'0'}"
+        :cell-style="{height: '44px',padding:'0',textAlign: 'center',}"
       >
         <el-table-column
           type="index"
@@ -88,7 +89,7 @@
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="handleClick(scope.row)">查看详情</el-button>
             <el-button type="text" size="small">编辑</el-button>
-            <el-button type="text" size="small">删除</el-button>
+            <el-button type="text" size="small" @click="delOwner(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -110,12 +111,13 @@
 </template>
 
 <script>
-import { getownerList } from '@/api'
+import { getownerList, delOwner } from '@/api'
 export default {
   name: 'GoodsOwner',
 
   data() {
     return {
+      loading: false,
       formInline: {
         code: '',
         name: '',
@@ -136,6 +138,21 @@ export default {
   },
 
   methods: {
+    // 删除货主
+    async delOwner(id) {
+      try {
+        await this.$confirm('此操作将永久删除该货主, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        await delOwner({ 'ids[]': id })
+        this.getownerList()
+        this.$message.success('删除货主成功')
+      } catch (e) { console.dir(e) } finally {
+        this.loading = false
+      }
+    },
     // 新增货主
     addowner() {
       this.$router.push('/business/goodsOwner/details')
