@@ -126,6 +126,10 @@ export default {
         warehouseName: '',
         status: null
       }
+      this.getListData = {
+        current: 1,
+        size: 10
+      }
       this.getWareAreaList()
     },
 

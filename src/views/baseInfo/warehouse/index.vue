@@ -123,6 +123,11 @@ export default {
         like_name: null,
         status: null
       }
+      this.getListData = {
+        current: 1,
+        size: 10,
+        descs: 'createTime'
+      }
       this.getWareHouseList()
     },
     // 启用或者停用仓库

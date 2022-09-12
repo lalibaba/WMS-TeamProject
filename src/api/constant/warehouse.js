@@ -8,7 +8,7 @@ export const warehouseStatus = [
     name: '启用'
   },
   {
-    status: '',
+    status: undefined,
     name: '全部'
   }
 ]

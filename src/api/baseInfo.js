@@ -98,3 +98,11 @@ export const delWareArea = (params) => {
     params
   })
 }
+
+// 分页查询库位
+export const getWareLocationList = (params) => {
+  return request({
+    url: '/location/pageDetail',
+    params
+  })
+}

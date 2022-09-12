@@ -1,31 +1,31 @@
 <template>
   <div class="app-container">
     <el-card class="app-card">
-      <el-form ref="warehouseSearchForm" :model="wareHouseData" :inline="true">
-        <el-form-item label="仓库名称">
-          <el-input v-model="wareHouseData.warehouseName" placeholder="请输入" />
-        </el-form-item>
+      <el-form ref="warehouseSearchForm" :model="wareLocationData" :inline="true">
         <el-form-item label="库区名称">
-          <el-input v-model="wareHouseData.name" placeholder="请输入" />
+          <el-input v-model="wareLocationData.areaName" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="仓库状态">
-          <el-select v-model="wareHouseData.status" placeholder="请选择">
+        <el-form-item label="库位名称">
+          <el-input v-model="wareLocationData.name" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item label="库位状态">
+          <el-select v-model="wareLocationData.status" placeholder="请选择">
             <el-option v-for="item in warehouseStatus" :key="item.status" :label="item.name" :value="item.status" />
           </el-select>
         </el-form-item>
         <el-form-item class="mt-btn">
-          <el-button round class="search-btn">搜索</el-button>
-          <el-button round class="reset-btn">重置</el-button>
+          <el-button round class="search-btn" @click="searchWareLocation">搜索</el-button>
+          <el-button round class="reset-btn" @click="reset">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <!-- 仓库表格 -->
     <div class="my-table">
-      <button class="main-button">新增库区</button>
+      <button class="main-button">新增库位</button>
       <div class="func_btn">
-        <button class="download-btn">下载库区模版</button>
-        <button class="import-btn">导入库区信息</button>
+        <button class="download-btn">下载库位模版</button>
+        <button class="import-btn">导入库位信息</button>
       </div>
 
       <el-table
@@ -36,21 +36,21 @@
         header-row-class-name="my-table-header"
       >
         <el-table-column label="序号" width="67" type="index" />
-        <el-table-column label="所属仓库" width="160" prop="code" />
-        <el-table-column label="库区编号" width="160" prop="name" />
-        <el-table-column label="库区名称" width="160" prop="type" />
-        <el-table-column label="温度类型" width="160" prop="location" />
-        <el-table-column label="承重类型" width="160" prop="address" />
-        <el-table-column label="用途属性" width="160" prop="status" />
-        <el-table-column label="库区状态" width="160" prop="surface" />
-        <el-table-column label="负责人" width="160" prop="personName" />
-        <el-table-column label="联系电话" width="160" prop="phone" />
-        <el-table-column label="库位数量" width="150" prop="includedNum" />
+        <el-table-column label="所属仓库" width="160" prop="warehouseName" />
+        <el-table-column label="库区编号" width="150" prop="areaCode" />
+        <el-table-column label="库区名称" width="160" prop="areaName" />
+        <el-table-column label="库位编号" width="160" prop="code" />
+        <el-table-column label="库位名称" width="160" prop="name" />
+        <el-table-column label="温度类型" width="160" prop="temperatureType1" />
+        <el-table-column label="承重类型" width="160" prop="bearingType1" />
+        <el-table-column label="用途属性" width="160" prop="useType1" />
+        <el-table-column label="停用状态" width="160" prop="status1" />
+        <el-table-column label="承载上限" width="160" prop="maxNum" />
         <el-table-column label="更新时间" width="200" prop="updateTime" />
         <el-table-column label="操作" width="180" fixed="right">
           <template slot-scope="{row}">
             <el-button type="text" size="small">编辑</el-button>
-            <el-button v-if="row.status==='停用'" type="text" size="small">启用</el-button>
+            <el-button v-if="row.status*1===0" type="text" size="small">启用</el-button>
             <el-button v-else type="text" size="small">停用</el-button>
             <el-button type="text" size="small">删除</el-button>
           </template>
@@ -65,8 +65,8 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
           class="my-pagination"
-          @size-change="{}"
-          @current-change="{}"
+          @size-change="getWareLocationList"
+          @current-change="getWareLocationList"
         />
       </el-row>
     </div>
@@ -75,8 +75,8 @@
 </template>
 
 <script>
-import { getWareAreaList } from '@/api/baseInfo'
-import { warehouseStatus } from '@/api/constant/warehouse'
+import { getWareLocationList } from '@/api/baseInfo'
+import { warehouseStatus, wareAreaBearType, wareTemplateType, wareUserType } from '@/api/constant/warehouse'
 import StopRun from '@/components/StopRun'
 export default {
   components: {
@@ -84,9 +84,9 @@ export default {
   },
   data() {
     return {
-      wareHouseData: {
+      wareLocationData: {
         name: '',
-        warehouseName: '',
+        areaName: '',
         status: null
       },
       tableData: [],
@@ -94,19 +94,64 @@ export default {
       getListData: {
         current: 1,
         size: 10,
-        descs: 'createTime'
+        name: '',
+        areaName: ''
       },
       warehouseStatus: warehouseStatus
     }
   },
   mounted() {
-    this.getWareAreaList()
+    this.getWareLocationList()
   },
   methods: {
-    async getWareAreaList() {
-      const res = await getWareAreaList(this.getListData)
+    async getWareLocationList() {
+      const res = await getWareLocationList(this.getListData)
       this.total = res.total * 1
-      console.log(res)
+      this.tableData = this.processData(res.records)
+    },
+    async searchWareLocation() {
+      const res = await getWareLocationList({ ...this.getListData, ...this.wareLocationData })
+      this.total = res.total * 1
+      this.tableData = this.processData(res.records)
+    },
+    reset() {
+      this.wareLocationData = {
+        name: '',
+        areaName: '',
+        status: null
+      }
+      this.getListData = {
+        current: 1,
+        size: 10,
+        name: '',
+        areaName: ''
+      }
+      this.getWareLocationList()
+    },
+    processData(data) {
+      data.forEach((ele) => {
+        warehouseStatus.forEach((item) => {
+          if (ele.status === item.status) {
+            ele.status1 = item.name
+          }
+        })
+        wareAreaBearType.forEach((item) => {
+          if (ele.bearingType === item.bearingType) {
+            ele.bearingType1 = item.name
+          }
+        })
+        wareTemplateType.forEach((item) => {
+          if (ele.temperatureType === item.temperatureType) {
+            ele.temperatureType1 = item.name
+          }
+        })
+        wareUserType.forEach((item) => {
+          if (ele.useType === item.useType) {
+            ele.useType1 = item.name
+          }
+        })
+      })
+      return data
     }
   }
 }
