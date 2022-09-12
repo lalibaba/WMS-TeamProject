@@ -13,6 +13,7 @@ service.interceptors.request.use(config => {
   if (config.baseurl === process.env.VUE_APP_BASE_IPS) {
     config.baseURL = process.env.VUE_APP_BASE_IPS
   }
+  return config
 }, error => {
   return Promise.reject(error)
 })
