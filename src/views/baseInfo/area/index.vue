@@ -49,10 +49,10 @@
         <el-table-column label="更新时间" width="200" prop="updateTime" />
         <el-table-column label="操作" width="180" fixed="right">
           <template slot-scope="{row}">
-            <el-button type="text" size="small">编辑</el-button>
-            <el-button v-if="row.status*1===0" type="text" size="small">启用</el-button>
-            <el-button v-else type="text" size="small">停用</el-button>
-            <el-button type="text" size="small">删除</el-button>
+            <el-button type="text" size="small" @click="$router.push({path: `/baseinfo/area/details/${row.id}`})">编辑</el-button>
+            <el-button v-if="row.status*1===0" type="text" size="small" @click="useChange(row)">启用</el-button>
+            <el-button v-else type="text" size="small" @click="useChange(row)">停用</el-button>
+            <el-button type="text" size="small" @click="deleteArea(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -70,12 +70,14 @@
         />
       </el-row>
     </div>
-    <StopRun />
+
+    <StopRun ref="stopRun" :dialog-visible.sync="useShow" @confirm="confirmChange" />
+    <StopRun ref="delete" :dialog-visible.sync="deleteShow" @confirm="confirmDelete" />
   </div>
 </template>
 
 <script>
-import { getWareAreaList } from '@/api/baseInfo'
+import { getWareAreaList, changeNewWareArea, delWareArea } from '@/api/baseInfo'
 import { warehouseStatus, wareAreaBearType, wareTemplateType, wareUserType } from '@/api/constant/warehouse'
 import StopRun from '@/components/StopRun'
 export default {
@@ -95,7 +97,13 @@ export default {
         current: 1,
         size: 10
       },
-      warehouseStatus: warehouseStatus
+      warehouseStatus: warehouseStatus,
+      // 改变启用状态
+      useShow: false,
+      changeWareAreaStatus: {},
+      // 删除
+      deleteShow: false,
+      delAreaId: null
     }
   },
   mounted() {
@@ -119,6 +127,45 @@ export default {
         status: null
       }
       this.getWareAreaList()
+    },
+
+    // 启用停用库区
+    useChange(row) {
+      let status1 = ''
+      if (row.status1 === '启用') {
+        status1 = '停用'
+      } else {
+        status1 = '启用'
+      }
+      this.changeWareAreaStatus.id = row.id
+      this.changeWareAreaStatus.status = Number(!row.status)
+      this.$refs.stopRun.changeName(status1, row.name)
+      this.useShow = true
+    },
+    async confirmChange() {
+      try {
+        await changeNewWareArea(this.changeWareAreaStatus)
+        this.getWareAreaList()
+        this.$message.success('状态改变成功')
+      } catch (e) {
+        console.log(e)
+      }
+    },
+
+    // 删除库区
+    deleteArea(row) {
+      this.delAreaId = row.id
+      this.$refs.delete.changeName('删除', row.name)
+      this.deleteShow = true
+    },
+    async confirmDelete() {
+      try {
+        await delWareArea({ 'ids[]': this.delAreaId })
+        this.getWareAreaList()
+        this.$message.success('删除成功')
+      } catch (e) {
+        console.log(e)
+      }
     },
     processData(data) {
       data.forEach((ele) => {

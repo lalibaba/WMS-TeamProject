@@ -73,3 +73,28 @@ export const addNewWareArea = (data) => {
     data
   })
 }
+
+// 修改库区
+export const changeNewWareArea = (data) => {
+  return request({
+    url: '/area',
+    method: 'PUT',
+    data
+  })
+}
+
+// 查询库区信息
+export const getWareAreaDetail = (id) => {
+  return request({
+    url: `/area/${id}`
+  })
+}
+
+// 删除库区
+export const delWareArea = (params) => {
+  return request({
+    url: '/area',
+    method: 'DELETE',
+    params
+  })
+}

@@ -79,7 +79,7 @@
 <script>
 import { checkPhoneNum } from '@/utils/validate'
 import { wareAreaBearType, wareTemplateType, wareUserType } from '@/api/constant/warehouse'
-import { searchWareHouse, getWareHouseCode, addNewWareArea } from '@/api/baseInfo'
+import { searchWareHouse, getWareHouseCode, addNewWareArea, getWareAreaDetail, changeNewWareArea } from '@/api/baseInfo'
 export default {
   data() {
     var checkPhone = (rule, value, callback) => {
@@ -122,7 +122,7 @@ export default {
     // 判断是新增还是编辑修改
     if (this.$route.params.id !== 'null') {
       this.$route.meta.title = '编辑库区'
-    //   this.getWareHouseDetail(this.$route.params.id)
+      this.getWareAreaDetail(this.$route.params.id)
     } else {
       this.wareAreaData.code = await getWareHouseCode('KQ')
     }
@@ -137,13 +137,17 @@ export default {
       try {
         await this.$refs.wareAreaForm.validate()
         console.log(this.$route.params.id)
-        this.$route.params.id !== 'null' ? await 'changeNewWarehouse(this.wareHouseData)' : await addNewWareArea(this.wareAreaData)
+        this.$route.params.id !== 'null' ? await changeNewWareArea(this.wareAreaData) : await addNewWareArea(this.wareAreaData)
         this.$message.success('恭喜你，提交成功')
         this.$router.back()
         this.$refs.wareAreaForm.resetField()
       } catch (e) {
         console.log(e)
       }
+    },
+    async getWareAreaDetail(id) {
+      this.wareAreaData = await getWareAreaDetail(id)
+      this.wareAreaData.status = this.wareAreaData.status.toString()
     }
   }
 }

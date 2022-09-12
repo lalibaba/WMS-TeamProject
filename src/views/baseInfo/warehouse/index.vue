@@ -125,9 +125,6 @@ export default {
       }
       this.getWareHouseList()
     },
-    add(row) {
-      console.log(row)
-    },
     // 启用或者停用仓库
     useChange(row) {
       let status = ''
