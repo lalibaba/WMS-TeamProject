@@ -99,11 +99,27 @@ export const delWareArea = (params) => {
   })
 }
 
+// 导入库区
+export const importArea = (data) => {
+  return request({
+    url: '/area/importExcel',
+    method: 'POST',
+    data
+  })
+}
+
 // 查询全部库区
 export const searchAllWareArea = (params) => {
   return request({
     url: '/area/list',
     params
+  })
+}
+
+// 库区总览
+export const searchAreaOverview = (id) => {
+  return request({
+    url: `/area/overview/${id}`
   })
 }
 
@@ -145,6 +161,23 @@ export const delWareLocation = (params) => {
   return request({
     url: '/location',
     method: 'DELETE',
+    params
+  })
+}
+
+// 导入库位
+export const importLocation = (data) => {
+  return request({
+    url: '/location/importExcel',
+    method: 'POST',
+    data
+  })
+}
+
+// 获取库位详细信息
+export const getLocationDetails = (params) => {
+  return request({
+    url: '/location/listDetail',
     params
   })
 }

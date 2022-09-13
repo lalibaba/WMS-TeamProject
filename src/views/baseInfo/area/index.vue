@@ -24,8 +24,8 @@
     <div class="my-table">
       <button class="main-button" @click="$router.push({path: '/baseInfo/area/details/null'})">新增库区</button>
       <div class="func_btn">
-        <button class="download-btn">下载库区模版</button>
-        <button class="import-btn">导入库区信息</button>
+        <button class="download-btn" @click="exportData">下载库区模版</button>
+        <button class="import-btn" @click="uploadShow=true">导入库区信息</button>
       </div>
 
       <el-table
@@ -73,17 +73,14 @@
 
     <StopRun ref="stopRun" :dialog-visible.sync="useShow" @confirm="confirmChange" />
     <StopRun ref="delete" :dialog-visible.sync="deleteShow" @confirm="confirmDelete" />
+    <UploadExcel :dialog-visible.sync="uploadShow" title="导入库区" @confirmUpload="confirmUpload" />
   </div>
 </template>
 
 <script>
-import { getWareAreaList, changeNewWareArea, delWareArea } from '@/api/baseInfo'
+import { getWareAreaList, changeNewWareArea, delWareArea, importArea } from '@/api/baseInfo'
 import { warehouseStatus, wareAreaBearType, wareTemplateType, wareUserType } from '@/api/constant/warehouse'
-import StopRun from '@/components/StopRun'
 export default {
-  components: {
-    StopRun
-  },
   data() {
     return {
       wareHouseData: {
@@ -103,7 +100,9 @@ export default {
       changeWareAreaStatus: {},
       // 删除
       deleteShow: false,
-      delAreaId: null
+      delAreaId: null,
+      // 上传
+      uploadShow: false
     }
   },
   mounted() {
@@ -170,6 +169,31 @@ export default {
       } catch (e) {
         console.log(e)
       }
+    },
+    // 上传
+    async confirmUpload(file) {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await importArea(formData)
+      if (res.success === res.total) {
+        this.$message.success(`总共导入${res.total}条，全部导入成功`)
+      } else {
+        this.$message.warning(`总共导入${res.total}条，导入成功${res.success}条，导入失败${res.fail}条`)
+      }
+      this.getWareAreaList()
+    },
+    exportData() {
+      import('@/vendors/Export2Excel').then(excel => {
+        const data = []
+        const tHeader = ['所属仓库名称', '库区名称', '温度类型',	'承重类型', '库区类型', '用途属性', '库区状态',	'负责人', '联系电话']
+        excel.export_json_to_excel({
+          header: tHeader, // 表头 必填
+          data, // 具体数据 必填
+          filename: 'areaTemplate', // 非必填
+          autoWidth: true, // 非必填
+          bookType: 'xlsx' // 非必填
+        })
+      })
     },
     processData(data) {
       data.forEach((ele) => {

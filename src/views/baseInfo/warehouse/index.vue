@@ -75,11 +75,7 @@
 <script>
 import { getWareHouseList, changeNewWarehouse, delWarehouse } from '@/api/baseInfo'
 import { warehouseStatus, warehouseType } from '@/api/constant/warehouse'
-import StopRun from '@/components/StopRun'
 export default {
-  components: {
-    StopRun
-  },
   data() {
     return {
       wareHouseData: {

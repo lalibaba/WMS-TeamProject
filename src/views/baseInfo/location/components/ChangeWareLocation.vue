@@ -10,6 +10,7 @@
                 ref="cascader"
                 v-model="wareLocationData.location"
                 :props="props"
+                @change="chooseId"
               />
             </el-form-item>
           </el-col>
@@ -154,7 +155,7 @@ export default {
         useType: '',
         warehouseId: ''
       },
-      showE: null,
+      showE: true,
       rules: {
         location: [{ required: true, message: '请选择库区', trigger: 'blur' }],
         name: [{ required: true, message: '请输入库位名称', trigger: 'blur' }],
@@ -213,6 +214,10 @@ export default {
       this.wareLocationData.status = res.status.toString()
 
     //   this.$refs.cascader.panel.lazyLoad()
+    },
+    chooseId(val) {
+      this.wareLocationData.warehouseId = val[0]
+      this.wareLocationData.areaId = val[1]
     },
     async confirmSubmit() {
       try {
