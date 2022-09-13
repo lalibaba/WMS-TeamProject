@@ -1,14 +1,15 @@
 <template>
-  <div>
+  <div class="collapsebox">
     <el-collapse v-model="activeNames" @change="handleChange">
       <el-collapse-item title="基础信息" name="1">
         <div class="divSteps">
           <el-steps :active="1">
-            <el-step title="步骤 1" description="新建" />
-            <el-step title="步骤 2" description="收货中" />
-            <el-step title="步骤 3" description="收货完成" />
-            <el-step title="步骤 4" description="上架中" />
-            <el-step title="步骤 5" description="上架完成" />
+            <el-step
+              v-for="item in data.timeArray"
+              :key="item.id"
+              title="步骤 1"
+              :description="item"
+            />
           </el-steps>
         </div>
         <div class="baseInfo">
@@ -37,19 +38,19 @@
           <el-row>
             <el-col :span="6">
               <p>货主编号</p>
-              <p>1</p>
+              <p>{{ data.ownerCode }}</p>
             </el-col>
             <el-col :span="6">
               <p>货主名称</p>
-              <p>1</p>
+              <p>{{ data.ownerName }}</p>
             </el-col>
             <el-col :span="6">
               <p>联系人</p>
-              <p>1</p>
+              <p>{{ data.owner.name }}</p>
             </el-col>
             <el-col :span="6">
               <p>联系电话</p>
-              <p>1</p>
+              <p>{{ data.owner.phone }}</p>
             </el-col>
           </el-row>
         </div>
@@ -58,7 +59,7 @@
         <div>
           <div class="infoTip">总计:20个 总体积 15.0m³</div>
           <div>
-            <tablecomponent>
+            <tablecomponent :tablelist="receiptList">
               <template v-slot:table>
                 <el-table-column
                   type="index"
@@ -71,12 +72,12 @@
                   width="150"
                 />
                 <el-table-column
-                  prop="code"
+                  prop="goodsCode"
                   label="货品编码"
                   width="150"
                 />
                 <el-table-column
-                  prop="name"
+                  prop="goodsName"
                   label="货品名称"
                   width="150"
                 />
@@ -86,27 +87,27 @@
                   width="150"
                 />
                 <el-table-column
-                  prop="price"
+                  prop="goodsPrice"
                   label="货品单价(天)"
                   width="150"
                 />
                 <el-table-column
-                  prop="guaranteeDay"
+                  prop="goodsGuaranteeDay"
                   label="保质天数(天)"
                   width="150"
                 />
                 <el-table-column
-                  prop="unit"
+                  prop="goodsUnit"
                   label="单位"
                   width="150"
                 />
                 <el-table-column
-                  prop="volume"
+                  prop="goodsVolume"
                   label="体积(m³)"
                   width="150"
                 />
                 <el-table-column
-                  prop="volume"
+                  prop="planNum"
                   label="预计到货数"
                   width="150"
                 />
@@ -123,62 +124,62 @@
           <el-row>
             <el-col :span="6">
               <p>运单编号</p>
-              <p>1</p>
+              <p>{{ data.billCode }}</p>
             </el-col>
             <el-col :span="6">
               <p>承运商</p>
-              <p>1</p>
+              <p>{{ data.carrierName }}</p>
             </el-col>
             <el-col :span="6">
               <p>计划到达时间</p>
-              <p>1</p>
+              <p>{{ data.planArrivalTime }}</p>
             </el-col>
             <el-col :span="6">
               <p>发货人姓名</p>
-              <p>1</p>
+              <p>{{ data.shipperName }}</p>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="6">
               <p>送货人姓名</p>
-              <p>1</p>
+              <p>{{ data.deliveryName }}</p>
             </el-col>
             <el-col :span="6">
               <p>送货人电话</p>
-              <p>1</p>
+              <p>{{ data.deliveryPhone }}</p>
             </el-col>
           </el-row>
         </div>
       </el-collapse-item>
-      <el-collapse-item title="运输信息" name="4">
+      <el-collapse-item v-if="data.receivingEntity" title="任务信息" name="5">
         <div class="infoTip">收货任务</div>
         <div class="baseInfo">
           <el-row>
             <el-col :span="6">
               <p>任务编号</p>
-              <p>1</p>
+              <p>{{ data.receivingEntity.code }}</p>
             </el-col>
             <el-col :span="6">
-              <p>收货完成已取消</p>
-              <p>1</p>
+              <p>任务状态</p>
+              <p>{{ data.receivingEntity.status }}</p>
             </el-col>
             <el-col :span="6">
               <p>收货人</p>
-              <p>1</p>
+              <p>{{ data.receivingEntity.receiverName }}</p>
             </el-col>
             <el-col :span="6">
               <p>开始时间</p>
-              <p>1</p>
+              <p>{{ data.receivingEntity.createTime }}</p>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="6">
               <p>完成时间</p>
-              <p>1</p>
+              <p>{{ data.receivingEntity.completionTime }}</p>
             </el-col>
             <el-col :span="6">
               <p>实收数量</p>
-              <p>1</p>
+              <p>{{ data.receivingEntity.realNum }}</p>
             </el-col>
           </el-row>
         </div>
@@ -188,49 +189,59 @@
             <el-row>
               <el-col :span="6">
                 <p>任务编号</p>
-                <p>1</p>
+                <p>{{ data.groundingEntity.code }}</p>
               </el-col>
               <el-col :span="6">
-                <p>收货完成已取消</p>
-                <p>1</p>
+                <p>任务状态</p>
+                <p>{{ data.groundingEntity.code }}</p>
               </el-col>
               <el-col :span="6">
                 <p>上架人</p>
-                <p>1</p>
+                <p>{{ data.groundingEntity.code }}</p>
               </el-col>
               <el-col :span="6">
                 <p>开始时间</p>
-                <p>1</p>
+                <p>{{ data.groundingEntity.createTime }}</p>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="6">
                 <p>完成时间</p>
-                <p>1</p>
+                <p>{{ data.groundingEntity.completionTime }}</p>
               </el-col>
               <el-col :span="6">
                 <p>实上数量</p>
-                <p>1</p>
+                <p>{{ data.groundingEntity.groundingNum }}</p>
               </el-col>
               <el-col :span="6">
                 <p>差异合计</p>
-                <p>1</p>
+                <p>{{ data.groundingEntity.differenceNum }}</p>
               </el-col>
               <el-col :span="6">
                 <p>损益合计</p>
-                <p>1</p>
+                <p>{{ data.idMoney }}</p>
               </el-col>
             </el-row>
           </el-row>
           <div>损益明细</div>
           <div>
             <div>
-              <tablecomponent>
+              <tablecomponent :tablelist="data.idList">
                 <template v-slot:table>
                   <el-table-column
-                    type="index"
-                    label="序号"
-                    width="70"
+                    prop="code"
+                    label="损益单号"
+                    width="150"
+                  />
+                  <el-table-column
+                    prop="warehouseName"
+                    label="仓库名称"
+                    width="150"
+                  />
+                  <el-table-column
+                    prop="locationName"
+                    label="库位名称"
+                    width="150"
                   />
                   <el-table-column
                     prop="ownerName"
@@ -238,43 +249,28 @@
                     width="150"
                   />
                   <el-table-column
-                    prop="code"
-                    label="货品编码"
-                    width="150"
-                  />
-                  <el-table-column
-                    prop="name"
+                    prop="goodsName"
                     label="货品名称"
                     width="150"
                   />
                   <el-table-column
-                    prop="goodsTypeName"
-                    label="货品类型"
+                    prop="idNum"
+                    label="损益数量"
                     width="150"
                   />
                   <el-table-column
-                    prop="price"
-                    label="货品单价(天)"
+                    prop="idMoney"
+                    label="损益金额(元)"
                     width="150"
                   />
                   <el-table-column
-                    prop="guaranteeDay"
-                    label="保质天数(天)"
+                    prop="updateTime"
+                    label="处理时间"
                     width="150"
                   />
                   <el-table-column
-                    prop="unit"
-                    label="单位"
-                    width="150"
-                  />
-                  <el-table-column
-                    prop="volume"
-                    label="体积(m³)"
-                    width="150"
-                  />
-                  <el-table-column
-                    prop="volume"
-                    label="预计到货数"
+                    prop="status"
+                    label="损益单状态"
                     width="150"
                   />
                 </template>
@@ -293,6 +289,7 @@
 <script>
 import tablecomponent from '@/components/storageIn/table1'
 import mypage1 from '@/components/storageIn/mypage1'
+import { receiptListpageDetail } from '@/api/storageIn'
 export default {
   components: {
     tablecomponent,
@@ -300,7 +297,8 @@ export default {
   },
   data() {
     return {
-      activeNames: ['1']
+      activeNames: ['1'],
+      receiptList: []
     }
   },
   computed: {
@@ -309,17 +307,35 @@ export default {
     }
   },
   created() {
-    console.log(this.data)
+    this.receiptListpageDetail()
+    console.log(this.$route.query.masterId)
   },
   methods: {
     handleChange(val) {
       console.log(val)
+    },
+    async receiptListpageDetail() {
+      const res = await receiptListpageDetail({ masterId: this.$route.query.masterId })
+      this.receiptList = res.records
     }
   }
 }
 </script>
 
 <style scoped>
+.collapsebox{
+  padding: 20px 30px 30px 30px;
+}
+.collapsebox .el-collapse-item {
+    background: #fff;
+    box-shadow: 0 0 6px 0 rgb(144 142 142 / 17%);
+    border-radius: 12px;
+    margin-bottom: 25px;
+    padding: 14px 27px 15px;
+}
+/deep/ .el-collapse-item__header{
+  border-bottom: 0px;
+}
 .divSteps {
     width: 70%;
     margin: 22px auto 37px;

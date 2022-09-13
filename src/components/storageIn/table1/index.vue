@@ -4,6 +4,7 @@
     style="width: 100%"
     :cell-style="{border: '0px',padding: '7px 0px'}"
     :row-style="{padding: '30px'}"
+    @selection-change="selectionchange"
   >
     <slot name="table" />
   </el-table>
@@ -22,15 +23,17 @@ export default {
     }
   },
   created() {
-    console.log(this.tableData)
   },
   methods: {
-    handleClick(row) {
-      console.log(row)
+    selectionchange(selection) {
+      const arr = []
+      selection.forEach((ele, index) => {
+        arr.push(ele.id)
+      })
+      this.$emit('selectionchange', arr)
     }
   }
 }
 </script>
 <style scoped>
-
 </style>

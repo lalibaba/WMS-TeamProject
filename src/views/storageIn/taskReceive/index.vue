@@ -1,12 +1,19 @@
 <template>
   <div class="main-box">
-    <search :input1="'上架编号'" :input2="'入库单号'" :input3="'货主名称'" />
+    <search
+      :input1="'任务编号'"
+      :input2="'货主名称'"
+      :input3="'收货状态'"
+      :isinput3="false"
+      @search="searchfn"
+      @reset="searchfn"
+    />
     <div class="content-box">
       <div class="box-top">
         <el-button class="search">收货完成</el-button>
       </div>
       <div class="box">
-        <tablecomponent>
+        <tablecomponent :tablelist="receivinglist">
           <template v-slot:table>
             <el-table-column
               type="selection"
@@ -18,70 +25,70 @@
               width="50"
             />
             <el-table-column
-              prop="name"
+              prop="code"
               label="收货任务编号"
-              width="120"
+              width="160"
             />
             <el-table-column
-              prop="province"
+              prop="receiptCode"
               label="入库单号"
-              width="120"
+              width="160"
             />
             <el-table-column
-              prop="city"
+              prop="createName"
               label="创建人"
-              width="120"
+              width="160"
             />
             <el-table-column
-              prop="address"
+              prop="createTime"
               label="创建时间"
-              width="120"
+              width="160"
               sortable
             />
             <el-table-column
-              prop="zip"
+              prop="ownerName"
               label="货主名称"
-              width="120"
+              width="160"
             />
             <el-table-column
-              prop="zip"
+              prop="warehouseName"
               label="仓库名称"
-              width="120"
+              width="160"
             />
             <el-table-column
-              prop="zip"
+              prop="areaName"
               label="库区名称"
-              width="120"
+              width="160"
             />
             <el-table-column
-              prop="zip"
+              prop="planNum"
               label="预计到货数"
-              width="120"
+              width="160"
             />
             <el-table-column
-              prop="zip"
+              prop="status"
               label="收获状态"
-              width="120"
+              width="160"
             />
             <el-table-column
-              prop="zip"
+              prop="receiverName"
               label="收货人"
-              width="120"
+              width="160"
             />
             <el-table-column
-              prop="zip"
+              prop="realNum"
               label="实收总数"
-              width="120"
+              width="160"
             />
             <el-table-column
-              prop="zip"
+              prop="differenceNum"
               label="收获差异"
-              width="120"
+              width="160"
             />
             <el-table-column
-              prop="zip"
+              prop="completionTime"
               label="收货完成时间"
-              width="120"
+              width="160"
             />
             <el-table-column
               fixed="right"
@@ -89,13 +96,13 @@
               width="100"
             >
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="godetails(scope.row)">查看详细</el-button>
+                <el-button type="text" size="small" @click="godetails(scope.row.masterId)">查看详细</el-button>
               </template>
             </el-table-column>
           </template>
         </tablecomponent>
       </div>
-      <mypage1 />
+      <mypage1 :total="total" />
     </div>
   </div>
 </template>
@@ -105,6 +112,7 @@ import search from '@/components/storageIn/search'
 import tablecomponent from '@/components/storageIn/table1'
 import mypage1 from '@/components/storageIn/mypage1'
 import { receivingPageDetail } from '@/api/taskReceive'
+import { receiptListpageDetail } from '@/api/storageIn'
 export default {
   name: 'TaskReceive',
   components: {
@@ -113,15 +121,21 @@ export default {
     mypage1
   },
   props: {
-
   },
   data() {
     return {
-
+      receivinglist: [],
+      total: 0,
+      options: {
+        code: '',
+        ownerName: '',
+        current: 1,
+        size: 10
+      },
+      status: ''
     }
   },
   watch: {
-
   },
   mounted() {
     this.receivingPageDetail()
@@ -129,11 +143,27 @@ export default {
   destroyed() {
   },
   methods: {
-    godetails() {
+    // 查看详细
+    async godetails(masterId) {
+      const res = await receiptListpageDetail({ masterId: masterId })
+      console.log(res)
+      this.$store.dispatch('storageIn/receivingdetails', res)
       this.$router.push('/storageIn/taskReceive/details')
     },
+    // 查询收货任务
     async receivingPageDetail() {
-      await receivingPageDetail()
+      const res = await receivingPageDetail({ ...this.options })
+      this.receivinglist = res.records
+      this.total = parseInt(res.total)
+      console.log(res)
+    },
+    // 搜索功能
+    searchfn(value) {
+      console.log(value)
+      this.options.code = value.value1
+      this.options.ownerName = value.value2
+      this.status = value.value3
+      this.receivingPageDetail()
     }
   }
 }
@@ -163,6 +193,7 @@ export default {
   letter-spacing: 0px;
   text-align: center;
 }
+
 /deep/ .box .el-table th{
   text-align: center;
   background-color: #f8f5f5;

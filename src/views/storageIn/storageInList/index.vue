@@ -98,7 +98,10 @@
               width="250"
             >
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="handleClick(scope.row.id)">查看详细</el-button>
+                <el-button v-show="scope.row.status !== '新建'" type="text" size="small" @click="handleClick(scope.row.id)">查看详细</el-button>
+                <el-button v-show="scope.row.status === '新建'" type="text" size="small" @click="editClick(scope.row.id)">修改详情</el-button>
+                <el-button v-show="scope.row.status === '新建'" type="text" size="small" @click="delclick(scope.row)">取消</el-button>
+                <el-button v-show="scope.row.status === '新建'" type="text" size="small">生成收货任务</el-button>
               </template>
             </el-table-column>
           </template>
@@ -115,7 +118,7 @@
 import search from '@/components/storageIn/search'
 import tablecomponent from '@/components/storageIn/table1'
 import mypage1 from '@/components/storageIn/mypage1'
-import { getstorageinlist, receiptdetail } from '@/api/storageIn'
+import { getstorageinlist, receiptdetail, receiptcancel } from '@/api/storageIn'
 import status from '@/api/storageIns/storageIn'
 export default {
   name: 'StorageInList',
@@ -140,7 +143,6 @@ export default {
     }
   },
   created() {
-    // console.log(status)
     this.getstorageinlist()
   },
   methods: {
@@ -148,7 +150,8 @@ export default {
     async getstorageinlist() {
       try {
         const res = await getstorageinlist({ ...this.options })
-        this.tablelist = res.records
+        this.tablelist = this.changestatus(res.records)
+        // this.tablelist = res.records
         this.total = parseInt(res.total)
         this.options.current = res.current
       } catch (e) {
@@ -162,10 +165,28 @@ export default {
     // 查看详细
     async handleClick(id) {
       const res = await receiptdetail(id)
+      // 把数据存到vuex
       this.$store.dispatch('storageIn/viewdetails', res)
-      console.log(res)
-      this.$router.push('/storageIn/storageInList/list-details')
+      // console.log(res)
+      // 路由传参
+      this.$router.push({
+        path: '/storageIn/storageInList/list-details',
+        query: {
+          masterId: id
+        }
+      })
     },
+    // 修改详情
+    editClick(id) {
+      console.log(id)
+      this.$router.push({
+        path: '/storageIn/storageInList/details',
+        query: {
+          id: id
+        }
+      })
+    },
+    // 搜索功能
     searchfn(value) {
       this.options.code = value.value1
       this.options.billCode = value.value2
@@ -175,6 +196,31 @@ export default {
     currentpagefn(val) {
       this.options.current = val
       this.getstorageinlist()
+    },
+    // 转换入库单状态
+    changestatus(data) {
+      data.forEach(ele => {
+        status.status.forEach(item => {
+          if (item.id === ele.status) {
+            ele.status = item.value
+          }
+        })
+      })
+      return data
+    },
+    // 取消入库单
+    async delclick(row) {
+      console.log(row)
+      this.$confirm(`确认取消入库单号为${row.code}的入库单吗?`, '取消确认', {
+      }).then(res => {
+        return receiptcancel({ id: row.id })
+      }).then(res => {
+        this.getstorageinlist()
+        this.$message.success('成功取消')
+      })
+      // await receiptcancel({ id: id })
+      // this.getstorageinlist()
+      // this.$message.success('成功取消')
     }
   }
 }

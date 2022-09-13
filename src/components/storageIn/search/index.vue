@@ -13,8 +13,22 @@
           </el-form-item>
         </el-col>
         <el-col class="form-row-col" :span="6">
-          <el-form-item :label="input3">
+          <el-form-item v-if="isinput3" :label="input3">
             <el-input v-model="searchdata.value3" placeholder="请输入" class="inputbox" clearable />
+          </el-form-item>
+          <el-form-item v-else :label="input3">
+            <el-select
+              v-model="searchdata.value3"
+              placeholder="请选择"
+              @change="change"
+            >
+              <el-option
+                v-for="item in data"
+                :key="item.value"
+                :label="item.label"
+                :value="item.id"
+              />
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col class="form-row-col rightbtnbox" :span="6">
@@ -29,6 +43,7 @@
 </template>
 
 <script>
+import receivingstatus from '@/api/storageIns/storageIn'
 export default {
   name: 'Search',
   props: {
@@ -43,6 +58,10 @@ export default {
     input3: {
       type: String,
       default: ''
+    },
+    isinput3: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -53,6 +72,14 @@ export default {
         value3: ''
       }
     }
+  },
+  computed: {
+    data() {
+      return receivingstatus.receivingstatus
+    }
+  },
+  created() {
+    console.log(this.data)
   },
   methods: {
     search() {
@@ -65,6 +92,10 @@ export default {
         value3: ''
       }
       this.$emit('reset', this.searchdata)
+    },
+    change(a) {
+      console.log(this.searchdata)
+      console.log(a)
     }
   }
 }
@@ -110,5 +141,8 @@ export default {
       }
     }
 
+}
+.el-form-item__content .el-select{
+  width: 100%;
 }
 </style>

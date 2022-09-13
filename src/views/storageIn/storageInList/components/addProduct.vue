@@ -22,59 +22,61 @@
         </el-row>
       </el-form>
     </div>
-    <table1 :tablelist="goodslist">
-      <template v-slot:table>
-        <el-table-column
-          type="selection"
-          width="50"
-        />
-        <el-table-column
-          type="index"
-          label="序号"
-          width="70"
-        />
-        <el-table-column
-          prop="ownerName"
-          label="货主名称"
-          width="150"
-        />
-        <el-table-column
-          prop="code"
-          label="货品编码"
-          width="150"
-        />
-        <el-table-column
-          prop="name"
-          label="货品名称"
-          width="150"
-        />
-        <el-table-column
-          prop="goodsTypeName"
-          label="货品类型"
-          width="150"
-        />
-        <el-table-column
-          prop="price"
-          label="货品单价(天)"
-          width="150"
-        />
-        <el-table-column
-          prop="guaranteeDay"
-          label="保质天数(天)"
-          width="150"
-        />
-        <el-table-column
-          prop="unit"
-          label="单位"
-          width="150"
-        />
-        <el-table-column
-          prop="volume"
-          label="体积(m³)"
-          width="150"
-        />
-      </template>
-    </table1>
+    <div class="box">
+      <table1 :tablelist="goodslist" @selectionchange="selectionchange">
+        <template v-slot:table>
+          <el-table-column
+            type="selection"
+            width="50"
+          />
+          <el-table-column
+            type="index"
+            label="序号"
+            width="70"
+          />
+          <el-table-column
+            prop="ownerName"
+            label="货主名称"
+            width="150"
+          />
+          <el-table-column
+            prop="code"
+            label="货品编码"
+            width="150"
+          />
+          <el-table-column
+            prop="name"
+            label="货品名称"
+            width="150"
+          />
+          <el-table-column
+            prop="goodsTypeName"
+            label="货品类型"
+            width="150"
+          />
+          <el-table-column
+            prop="price"
+            label="货品单价(天)"
+            width="150"
+          />
+          <el-table-column
+            prop="guaranteeDay"
+            label="保质天数(天)"
+            width="150"
+          />
+          <el-table-column
+            prop="unit"
+            label="单位"
+            width="150"
+          />
+          <el-table-column
+            prop="volume"
+            label="体积(m³)"
+            width="150"
+          />
+        </template>
+      </table1>
+    </div>
     <mypage1 />
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">取 消</el-button>
@@ -101,13 +103,16 @@ export default {
     goodslist: {
       type: Array,
       default: () => []
+    },
+    masterId: {
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
       goods: '',
-      goodsIds: [],
-      masterId: ''
+      goodsIds: []
     }
   },
   created() {
@@ -124,8 +129,23 @@ export default {
       this.goods = ''
       this.$emit('search', this.goods)
     },
+    // 确认添加
     async Confirmtoadd() {
-      await receiptListbatch()
+      try {
+        await receiptListbatch({
+          goodsIds: this.goodsIds,
+          masterId: this.masterId
+        })
+        this.$message.success('添加成功')
+        this.$emit('update:dialogVisible', false)
+        this.$emit('render')
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    // 获取货物ids
+    selectionchange(ids) {
+      this.goodsIds = ids
     }
   }
 }
@@ -152,13 +172,20 @@ export default {
     border-radius: 20px;
 }
 .reset{
-        width: 90px;
-        height: 40px;
-        color: black;
-        background: rgb(248, 245, 245);
-        border-radius: 20px;
+    width: 90px;
+    height: 40px;
+    color: black;
+    background: rgb(248, 245, 245);
+    border-radius: 20px;
 }
 
+/deep/ .box .el-table th{
+  text-align: center;
+  background-color: #f8f5f5;
+}
+/deep/ .el-table--enable-row-transition .el-table__body td{
+  text-align: center;
+}
 /deep/ .el-form-item .el-form-item__label {
   font-size: 12px;
   font-family: PingFangSC,PingFangSC-Medium;

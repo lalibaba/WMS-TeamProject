@@ -64,7 +64,7 @@ export function receipt(id) {
   })
 }
 
-// 分页查询入库清单明细
+// 分页查询入库清单明细(货品信息)
 export function receiptListpageDetail(params) {
   return request({
     url: '/receiptList/pageDetail',
@@ -75,6 +75,7 @@ export function receiptListpageDetail(params) {
 // 批量新增入库清单
 export function receiptListbatch(data) {
   return request({
+    method: 'POST',
     url: '/receiptList/batch',
     baseurl: process.env.VUE_APP_BASE_IPS,
     data
@@ -85,6 +86,62 @@ export function receiptListbatch(data) {
 export function receiptdetail(id) {
   return request({
     url: `/receipt/detail/${id}`,
+    baseurl: process.env.VUE_APP_BASE_IPS
+  })
+}
+
+// 修改入库单
+export function editdetail(data) {
+  return request({
+    method: 'PUT',
+    url: '/receipt',
+    baseurl: process.env.VUE_APP_BASE_IPS,
+    data
+  })
+}
+
+// 查询入库单
+export function searchdetail(id) {
+  return request({
+    method: 'get',
+    url: `/receipt/${id}`,
+    baseurl: process.env.VUE_APP_BASE_IPS
+  })
+}
+
+// 查询货主管理(点击详情触发)
+export function owner(id) {
+  return request({
+    method: 'get',
+    url: `/owner/${id}`
+  })
+}
+
+// 取消入库单
+export function receiptcancel(data) {
+  return request({
+    method: 'put',
+    url: '/receipt/cancel',
+    data,
+    baseurl: process.env.VUE_APP_BASE_IPS
+  })
+}
+// 根据masterId删除清单
+export function delreceiptlist(params) {
+  return request({
+    method: 'DELETE',
+    url: '/receiptList/masterId',
+    params,
+    baseurl: process.env.VUE_APP_BASE_IPS
+  })
+}
+
+// 收货任务api
+// 分页查询收货任务明细
+export function receivingpageDetail(params) {
+  return request({
+    url: '/receiving/pageDetail',
+    params,
     baseurl: process.env.VUE_APP_BASE_IPS
   })
 }

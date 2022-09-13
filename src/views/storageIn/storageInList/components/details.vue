@@ -103,9 +103,77 @@
         <el-button class="search" @click="godetails">增加货品</el-button>
         <el-button class="reset">删除货品</el-button>
       </div>
-      <div class="emptyTip">
+      <div v-if="!receiptList" class="emptyTip">
         <div class="img" />
-        <div>无</div>
+      </div>
+      <div v-else class="box">
+        <table1 :tablelist="receiptList">
+          <template v-slot:table>
+            <el-table-column
+              type="selection"
+              width="50"
+            />
+            <el-table-column
+              type="index"
+              label="序号"
+              width="70"
+            />
+            <el-table-column
+              prop="ownerName"
+              label="货主名称"
+              width="150"
+            />
+            <el-table-column
+              prop="goodsCode"
+              label="货品编码"
+              width="150"
+            />
+            <el-table-column
+              prop="goodsName"
+              label="货品名称"
+              width="150"
+            />
+            <el-table-column
+              prop="goodsTypeName"
+              label="货品类型"
+              width="150"
+            />
+            <el-table-column
+              prop="goodsPrice"
+              label="货品单价(天)"
+              width="150"
+            />
+            <el-table-column
+              prop="goodsGuaranteeDay"
+              label="保质天数(天)"
+              width="150"
+            />
+            <el-table-column
+              prop="goodsUnit"
+              label="单位"
+              width="150"
+            />
+            <el-table-column
+              prop="goodsVolume"
+              label="体积(m³)"
+              width="150"
+            />
+            <el-table-column
+              prop="planNum"
+              label="到货数量"
+              width="150"
+            />
+            <el-table-column
+              fixed="right"
+              label="操作"
+              width="100"
+            >
+              <template slot-scope="scope">
+                <el-button type="text" size="small" @click="delclick(scope.row.masterId)">删除</el-button>
+              </template>
+            </el-table-column>
+          </template>
+        </table1>
       </div>
     </div>
     <div class="btnbox">
@@ -116,13 +184,16 @@
     <addProduct
       :dialog-visible.sync="dialogVisible"
       :goodslist="goodslist"
+      :master-id="masterId"
       @search="searchfn"
+      @render="receiptListpageDetail(masterId)"
     />
   </div>
 </template>
 
 <script>
 import addProduct from './addProduct.vue'
+import table1 from '@/components/storageIn/table1'
 import { parseTime } from '@/utils'
 import {
   getowner,
@@ -130,11 +201,16 @@ import {
   addreceipt,
   codeFactorynext,
   getgoodspageDetail,
-  receiptListpageDetail
+  receiptListpageDetail,
+  editdetail,
+  searchdetail,
+  owner,
+  delreceiptlist
 } from '@/api/storageIn'
 export default {
   components: {
-    addProduct
+    addProduct,
+    table1
   },
   data() {
     return {
@@ -158,7 +234,7 @@ export default {
         status: 1,
         id: ''
       },
-      id: '',
+      masterId: '',
       goodsdetails: { // 查询明细货品
         goods: '',
         current: 1,
@@ -189,28 +265,40 @@ export default {
           { required: true, message: '请输入', trigger: 'blur' },
           { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
         ]
-      }
+      },
+      receiptList: []
     }
   },
   created() {
     this.codeFactorynexts()
+    this.searchdetail()
   },
   methods: {
+    // 下一步
     async btnok() {
       if (this.isshow) {
         // await this.$refs.formdetails.validate()
         this.formdetails.planArrivalTime = parseTime(this.formdetails.planArrivalTime)
         this.goodsdetails.ownerId = this.formdetails.ownerId
-        const { id } = await addreceipt({ ...this.formdetails }) // 新增请求
-        // this.id = id // 主纪录id
-        this.receiptListpageDetail(id)
-        this.getgoodspageDetail()
+        if (this.formdetails.createName) {
+          console.log('修改')
+          const { id } = await editdetail({ ...this.formdetails })
+          this.masterId = id
+          this.receiptListpageDetail(id)
+        } else {
+          console.log('新增')
+          const { id } = await addreceipt({ ...this.formdetails })
+          this.masterId = id
+          this.receiptListpageDetail(id)
+        }
+        this.getgoodspageDetail() // 分页查询明细货品
         this.active++
         this.isshow = false
       } else {
-        return
+        this.$router.push('/storageIn/storageInList')
       }
     },
+    // 返回按钮
     backbtn() {
       if (this.isshow) {
         this.$router.go(-1)
@@ -219,6 +307,7 @@ export default {
         this.active--
       }
     },
+    // 增加货品按钮
     godetails() {
       this.dialogVisible = true
     },
@@ -250,13 +339,43 @@ export default {
       const res = await getgoodspageDetail({ ...this.goodsdetails })
       this.goodslist = res.records
     },
+    // 搜索
     searchfn(value) {
       this.goodsdetails.goods = value
       this.getgoodspageDetail()
     },
+    // 填写入库单基础信息下一步之后调用,遍历货品信息
     async receiptListpageDetail(id) {
       const res = await receiptListpageDetail({ masterId: id })
-      // console.log(res)
+      this.receiptList = res.records
+      console.log(this.receiptList)
+    },
+    // 点击修改查询入库单
+    async searchdetail() {
+      try {
+        const res = await searchdetail(this.$route.query.id)
+        console.log(res)
+        this.owner(res.ownerId) // 获取货主中文名字
+        this.formdetails = { ...res }
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    // 查询货主管理
+    async owner(id) {
+      const res = await owner(id)
+      // this.formdetails.ownerId = res.name
+      console.log(res)
+    },
+    // 单个删除入库清单
+    async delclick(masterId) {
+      this.$confirm(`确认删除?`, '提示', {
+      }).then(res => {
+        return delreceiptlist({ masterId: masterId })
+      }).then(res => {
+        this.receiptListpageDetail(masterId)
+        this.$message.success('成功删除')
+      })
     }
   }
 }
@@ -342,5 +461,19 @@ export default {
   display: inline-block;
   background: url('../../../../assets/404_images/empty4300e933.png') no-repeat;
   background-size: contain;
+}
+/deep/ .box .el-table th{
+  text-align: center;
+  background-color: #f8f5f5;
+}
+/deep/ .el-table--enable-row-transition .el-table__body td{
+  text-align: center;
+}
+/deep/ .el-form-item .el-form-item__label {
+  font-size: 12px;
+  font-family: PingFangSC,PingFangSC-Medium;
+  font-weight: 500;
+  color: #887e7e;
+  padding: 0;
 }
 </style>
