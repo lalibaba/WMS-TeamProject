@@ -97,21 +97,28 @@ export const constantRoutes = [
         path: 'taskPicking',
         name: 'taskPicking',
         component: () => import('@/views/business/taskPicking/index'),
-        meta: { title: '货运商管理' }
+        meta: { title: '承运商管理' }
       },
       {
         hidden: true,
         path: 'goodsOwner/details',
         name: 'goodsOwnerdetails',
-        component: () => import('@/views/business/details/index.vue'),
+        component: () => import('@/views/business/newdetails/index.vue'),
         meta: { title: '新增货主' }
       },
       {
         hidden: true,
         path: 'goodsOwner/details/:id',
         name: 'Ownerdetails',
-        component: () => import('@/views/business/details2/index.vue'),
+        component: () => import('@/views/business/ownerdetails/index.vue'),
         meta: { title: '货主详情' }
+      },
+      {
+        hidden: true,
+        path: 'goodsOwner/detail/:id',
+        name: 'editdetail',
+        component: () => import('@/views/business/editdetails/index.vue'),
+        meta: { title: '编辑货主' }
       }
     ]
   },

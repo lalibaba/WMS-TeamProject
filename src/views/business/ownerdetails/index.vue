@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-collapse v-model="activeNames" @change="handleChange">
+    <el-collapse>
       <el-card class="elradis">
         <el-collapse-item title="基础信息">
           <template slot="title">

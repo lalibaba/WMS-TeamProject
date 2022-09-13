@@ -22,6 +22,17 @@ export function addowner(data) {
 }
 /**
  *
+ *  修改货主管理
+ */
+export function editOwner(data) {
+  return request({
+    url: '/owner',
+    method: 'put',
+    data
+  })
+}
+/**
+ *
  *  删除货主管理
  */
 export function delOwner(params) {
@@ -102,3 +113,66 @@ export function getOwnerDetail(id) {
   })
 }
 
+/**
+ *
+ * 分页查询承运商
+ */
+export function getCarrierList(params) {
+  return request({
+    url: 'carrier/page',
+    params
+  })
+}
+/**
+ *
+ * 修改承运商
+ */
+export function editCarrier(data) {
+  return request({
+    url: 'carrier',
+    method: 'PUT',
+    data
+  })
+}
+/**
+ *
+ * 删除承运商
+ */
+export function delCarrier(id) {
+  return request({
+    url: `/carrier/${id}`,
+    method: 'delete'
+  })
+}
+/**
+ *
+ * 新增承运商
+ */
+export function addCarrier(data) {
+  return request({
+    url: '/carrier',
+    method: 'post',
+    data
+  })
+}
+
+// {"id": "1",
+// "createTime": "2022-09-12 12:17:29",
+// "createUser": "0",
+// "updateTime": "2022-09-13 12:00:01",
+// "updateUser": "0",
+// "code": "CYS000001",
+// "name": "品物流",
+// "personName": "三",
+// "phone": "18510981003",
+// "email": "18510981002@162.com",
+// "location": "北京市西城区",
+// "province": "1",
+// "city": "3",
+// "area": "2",
+// "address": "金融街13号",
+// "status": "0",
+// "remark": "新增",
+// "createName": "刘娟",
+// "updateName": "刘娟",
+// "logicDel": "1"}

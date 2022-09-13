@@ -158,6 +158,7 @@ export default {
   },
   mounted() {
     this.getTree()
+    this.getPageDetail()
   },
   destroyed() {
   },

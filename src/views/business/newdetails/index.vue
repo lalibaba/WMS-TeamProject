@@ -2,18 +2,14 @@
   <div class="container">
     <!-- 搜索卡片 -->
     <el-card class="elradis">
+
       <div class="steps">
-        <div class="stepsDiv" :class="ischange ? 'isActive' : ''">
-          <div v-if="ischange" class="round">①</div>
-          <div v-else class="yes">✔</div>
-          <div class="title" :class="!ischange ? 'color' : ''">基础信息</div>
-        </div>
-        <div class="line" />
-        <div class="stepsDiv" :class="!ischange ? 'isActive' : ''">
-          <div class="round">②</div>
-          <div class="title">分配库位</div>
-        </div>
+        <el-steps :space="500">
+          <el-step :status="ischange?'process':'success'" title="基础信息" />
+          <el-step :status="ischange?'wait':'process '" title="分配库位" style="flex-basis: 100px" />
+        </el-steps>
       </div>
+
       <!-- 基础信息 -->
       <template v-if="ischange">
         <el-form
@@ -236,50 +232,7 @@ export default {
   margin: 20px 30px 30px 30px;
 }
 /* 顶部样式 */
-.steps {
-  display: flex;
-  justify-content: space-between;
-  position: relative;
-  margin: 10px 20px 80px 20px;
-  .stepsDiv {
-    flex:1;
-    width: 70px;
-    font-size: 16px;
-    font-weight: 800;
-    color: #ccc;
-    margin: 0 225px;
-    .round {
-      font-size: 25px;
-      padding: 20px;
-    }
-    .yes {
-      // position: absolute ;
-      width: 25px;
-      height: 25px;
-      text-align: center;
-      font-size: 20px;
-      color:#ffb200;
-      border: 2px solid #ffb200;
-      border-radius: 50%;
-      margin: 23px 1px 13px 19px;
-    }
-    .color{
-      color:#ffb200;
-    }
-  }
-  .isActive {
-    color: #000;
-  }
-  .line {
-    flex:1;
-    position: absolute;
-    top: -3px;
-    left: 280px;
-    border-bottom: 2px solid #ccc;
-    width: 496px;
-    height: 40px;
-  }
-}
+
 </style>
 <style scoped lang="scss" >
 ::v-deep .el-card {
@@ -331,4 +284,18 @@ export default {
 ::v-deep .el-input {
   width: 100%;
 }
+
+ ::v-deep .steps {
+     width: 600px;
+    margin: 0 auto;
+    height: 100px;
+    margin-top: 56px;
+    .el-step{
+      &:last-child{
+    flex-basis: 100px !important;
+      }
+    }
+
+}
+
 </style>

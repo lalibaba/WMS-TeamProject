@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-
     <!-- 搜索卡片 -->
     <el-card class="elradis">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
@@ -14,7 +13,12 @@
           <el-input v-model="formInline.personName" placeholder="请输入" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" style="color:#000;margin-right:10px" round @click="search">搜索</el-button>
+          <el-button
+            type="primary"
+            style="color: #000; margin-right: 10px"
+            round
+            @click="search"
+          >搜索</el-button>
           <el-button round @click="reset">重置</el-button>
         </el-form-item>
       </el-form>
@@ -22,82 +26,63 @@
 
     <!-- 表格卡片 -->
     <el-card class="elradis2">
-      <el-button style="background:#00be76;width:110px; color:#fff;margin: 0 0 20px 30px" round @click="addowner">新增货主</el-button>
+      <el-button
+        style="
+          background: #00be76;
+          width: 110px;
+          color: #fff;
+          margin: 0 0 20px 30px;
+        "
+        round
+        @click="addowner"
+      >新增货主</el-button>
       <el-table
         :data="tableData"
         border
-        style="width: 100%;"
+        style="width: 100%"
         :header-cell-style="{
           textAlign: 'center',
           height: '44px',
           background: '#f9f6ee',
-          padding:'0',
-          fontSize: '13px'
+          padding: '0',
+          fontSize: '13px',
         }"
-        :cell-style="{height: '44px',padding:'0',textAlign: 'center',}"
+        :cell-style="{ height: '44px', padding: '0', textAlign: 'center',fontSize: '13px' }"
       >
-        <el-table-column
-          type="index"
-          label="序号"
-          width="100"
-        />
-        <el-table-column
-          prop="code"
-          label="货主编号"
-          width="160"
-        />
-        <el-table-column
-          prop="name"
-          label="货主名称"
-          width="160"
-        />
-        <el-table-column
-          prop="personName"
-          label="联系人"
-          width="160"
-        />
-        <el-table-column
-          prop="phone"
-          label="联系电话"
-          width="160"
-        />
-        <el-table-column
-          prop="email"
-          label="联系邮箱"
-          width="160"
-        />
-        <el-table-column
-          prop="location"
-          label="省/市/区"
-          width="278"
-        />
-        <el-table-column
-          prop="address"
-          label="详细地址"
-          width="300"
-        />
-        <el-table-column
-          prop="updateTime"
-          label="更新时间"
-          width="200"
-        />
-        <el-table-column
-          fixed="right"
-          label="操作"
-          width="250"
-        >
+        <el-table-column type="index" label="序号" width="100" />
+        <el-table-column prop="code" label="货主编号" width="160" />
+        <el-table-column prop="name" label="货主名称" width="160" />
+        <el-table-column prop="personName" label="联系人" width="160" />
+        <el-table-column prop="phone" label="联系电话" width="160" />
+        <el-table-column prop="email" label="联系邮箱" width="160" />
+        <el-table-column prop="location" label="省/市/区" width="278" />
+        <el-table-column prop="address" label="详细地址" width="300" />
+        <el-table-column prop="updateTime" label="更新时间" width="200" />
+        <el-table-column fixed="right" label="操作" width="250">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="handleClick(scope.row)">查看详情</el-button>
-            <el-button type="text" size="small">编辑</el-button>
-            <el-button type="text" size="small" @click="delOwner(scope.row.id)">删除</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="handleClick(scope.row)"
+            >查看详情</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="editOwner(scope.row)"
+            >编辑</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="delOwner(scope.row.id)"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <!-- 分页组件 -->
-      <div style="display: flex; justify-content: center;margin:20px 0">
+      <div style="display: flex; justify-content: center; margin: 20px 0">
         <el-pagination
           :current-page="formInline.current"
-          :page-sizes="[5,10, 20, 30, 40]"
+          :page-sizes="[5, 10, 20, 30, 40]"
           :page-size="formInline.size"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
@@ -105,7 +90,6 @@
           @current-change="handleCurrentChange"
         />
       </div>
-
     </el-card>
   </div>
 </template>
@@ -129,7 +113,6 @@ export default {
       tableData: [],
 
       total: 0
-
     }
   },
 
@@ -138,6 +121,10 @@ export default {
   },
 
   methods: {
+    // 编辑货主
+    editOwner(row) {
+      this.$router.push('/business/goodsOwner/detail/' + row.id)
+    },
     // 删除货主
     async delOwner(id) {
       try {
@@ -149,7 +136,9 @@ export default {
         await delOwner({ 'ids[]': id })
         this.getownerList()
         this.$message.success('删除货主成功')
-      } catch (e) { console.dir(e) } finally {
+      } catch (e) {
+        console.dir(e)
+      } finally {
         this.loading = false
       }
     },
@@ -160,13 +149,12 @@ export default {
     handleClick(row) {
       this.$router.push('/business/goodsOwner/details/' + row.id)
     },
-    // 提交搜索
-    onSubmit() {
-      console.log('submit!')
-    },
+
     // 请求货主列表
     async getownerList() {
-      const { records, size, total, current } = await getownerList(this.formInline)
+      const { records, size, total, current } = await getownerList(
+        this.formInline
+      )
       this.tableData = records
       this.total = +total
       this.formInline.current = +current
@@ -203,27 +191,25 @@ export default {
 .container {
   margin: 20px 30px 30px 30px;
 }
-
 </style>
 <style scoped lang="scss" >
-
 //搜索card
-::v-deep .el-card{
-  margin-bottom:20px
+::v-deep .el-card {
+  margin-bottom: 20px;
 }
 .elradis {
   border-radius: 12px;
 
-::v-deep .el-card__body {
-  padding: 40px 30px 20px 30px;
+  ::v-deep .el-card__body {
+    padding: 40px 30px 20px 30px;
+  }
 }
-}
-::v-deep  .elradis2 {
+.elradis2 {
   border-radius: 12px;
 
-::v-deep  .el-card__body {
-  padding:20px 0px 20px 0px;
-}
+  ::v-deep .el-card__body {
+    padding: 20px 0px;
+  }
 }
 ::v-deep .demo-form-inline {
   position: relative;
@@ -257,5 +243,4 @@ export default {
     width: 240px;
   }
 }
-
 </style>
