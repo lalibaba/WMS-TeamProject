@@ -24,10 +24,11 @@ export function addGood(data) {
  *
  *  删除货品管理
  */
-export function delGood(id) {
+export function delGood(params) {
   return request({
-    url: `/goods/${id}`,
-    method: 'delete'
+    url: '/goods',
+    method: 'delete',
+    params
   })
 }
 /**
@@ -39,6 +40,16 @@ export function editGood(data) {
     url: '/goods',
     method: 'PUT',
     data
+  })
+}
+/**
+ *
+ *  查询货品管理
+ */
+export function getGoodDetail(id) {
+  return request({
+    url: `/goods/${id}`,
+    method: 'get'
   })
 }
 /**

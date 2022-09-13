@@ -1,10 +1,9 @@
 <template>
   <div class="container">
-    <!-- 搜索卡片 -->
     <el-card class="elradis">
 
       <!-- 基础信息 -->
-      <template v-if="ischange">
+      <template>
         <el-form
           ref="formData"
           :inline="true"
@@ -24,6 +23,19 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
+              <el-form-item prop="goodsTypeName" label="货品类型">
+
+                <el-autocomplete
+                  v-model="formData.goodsTypeName"
+                  clearable
+                  :fetch-suggestions="querySearchAsync1"
+                  placeholder="请输入"
+                  suffix-icon="el-icon-search"
+                  @select="getGoodsType"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
               <el-form-item prop="name" label="货品名称">
                 <el-input
                   v-model="formData.name"
@@ -33,18 +45,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item prop="personName" label="联系人">
+              <el-form-item prop="barCode" label="货品条码">
                 <el-input
-                  v-model="formData.personName"
-                  clearable
-                  placeholder="请输入"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item prop="phone" label="联系电话">
-                <el-input
-                  v-model="formData.phone"
+                  v-model="formData.barCode"
                   clearable
                   placeholder="请输入"
                 />
@@ -55,46 +58,87 @@
           <!-- 2 -->
           <el-row :gutter="28">
             <el-col :span="6">
-              <el-form-item prop="email" label="联系人邮箱">
+              <el-form-item prop="ownerName" label="货主">
+                <el-autocomplete
+                  v-model="formData.ownerName"
+                  clearable
+                  :fetch-suggestions="querySearchAsync2"
+                  placeholder="请输入"
+                  suffix-icon="el-icon-search"
+                  @select="getAllareaList"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item prop="inspectionType" label="质检方式">
+                <el-select v-model="formData.inspectionType" placeholder="请选择">
+                  <el-option v-for="(item,index) in inspectionType" :key="index" :label="item" :value="index" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item prop="temperatureType" label="温度要求">
+                <el-select v-model="formData.temperatureType" placeholder="请选择">
+                  <el-option v-for="(item,index) in temperatureType" :key="index" :label="item" :value="index" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item prop="bearingType" label="承重要求">
+                <el-select v-model="formData.bearingType" placeholder="请选择">
+                  <el-option v-for="(item,index) in bearingType" :key="index" :label="item" :value="index" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <!--3-->
+          <el-row :gutter="28">
+            <el-col :span="6">
+              <el-form-item prop="volume" label="体积">
                 <el-input
-                  v-model="formData.email"
+                  v-model="formData.volume"
+                  type="number"
                   clearable
                   placeholder="请输入"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item prop="location" label="省/市/区">
-                <el-cascader
-                  v-if="isShowAddressInfo"
-                  ref="cascader"
-                  v-model="Location"
+              <el-form-item prop="areaName" label="指定货区">
+                <el-select v-model="formData.areaId" placeholder="请选择">
+                  <el-option v-for="(item,index) in areaNameList" :key="index" :label="item.name" :value="item.id" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item prop="price" label="单价">
+                <el-input
+                  v-model="formData.price"
+                  type="number"
                   clearable
-                  :options="options"
-                  :props="{ expandTrigger: 'hover' }"
-                  @change="handleChange"
+                  placeholder="请输入"
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item prop="address" label="详细地址">
+            <el-col :span="6">
+              <el-form-item prop="unit" label="单位">
                 <el-input
-                  v-model="formData.address"
+                  v-model="formData.unit"
                   clearable
                   placeholder="请输入"
                 />
               </el-form-item>
             </el-col>
           </el-row>
-          <!-- 2 -->
+          <!--4-->
           <el-row :gutter="28">
-            <el-col :span="12">
-              <el-form-item prop="remark" label="备注">
+            <el-col :span="6">
+              <el-form-item prop="guaranteeDay" label="质保天数">
                 <el-input
-                  v-model="formData.remark"
-                  type="textarea"
-                  placeholder="请输入内容"
-                  resize="none"
+                  v-model="formData.guaranteeDay"
+                  type="number"
+                  clearable
+                  placeholder="请输入"
                 />
               </el-form-item>
             </el-col>
@@ -122,141 +166,188 @@
             round
             type="primary"
             style="width: 170px; color: #000; margin: 30px"
-            @click="editOwner"
-          >下一步</el-button>
+            @click="editGood"
+          >提交</el-button>
         </div>
       </template>
-      <!-- 分配库位 -->
-      <!-- <SetPoint v-else :owner-id="ownerId" /> -->
     </el-card>
   </div>
 </template>
 
 <script>
-import { nextCode, getOwnerDetail, editOwner } from '@/api'
-import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
-// import SetPoint from '../component/setPoint.vue'
+import { goodsTypeVague, ownerVague, nextCode, getGoodDetail, editGood, getAllareaList } from '@/api'
 export default {
-  name: 'Index',
-  // components: { SetPoint },
+  name: 'EditGood',
   props: {},
   data() {
-    return {
-      // prop1:{
-      //   expandTrigger: 'hover',
-      //   label:
-      // },
-      // prop2:{
+    const ownerVali = (rule, value, callback) => {
+      if (!this.ownerVagues.some(ele => ele.name === value)) {
+        return callback(new Error('请输入已存在的货主'))
+      } else {
+        callback()
+      }
+    }
+    const goodVali = (rule, value, callback) => {
+      if (!this.goodsTypeVagues.some(ele => ele.name === value)) {
+        return callback(new Error('请输入已存在的货品类型'))
+      } else {
+        callback()
+      }
+    }
 
-      // },
-      isShowAddressInfo: true,
-      ownerId: '',
-      ischange: true,
-      options: regionData,
-      Location: [],
+    return {
+      goodsTypeVagues: [],
+      ownerVagues: [],
+      areaNameList: [],
+      inspectionType: { BCL: '不处理', QJ: '全检', CJ: '抽检' },
+      temperatureType: { CW: '常温', LC: '冷藏', HW: '恒温' },
+      bearingType: { ZX: '重型', QX: '轻型', BX: '中型' },
+
       formData: {
-        id: null,
         code: '',
-        name: 'gfd',
-        personName: 'hgf',
-        phone: '18270164631',
-        email: '5165184@qq.com',
-        location: '',
-        address: 'hg',
-        remark: 'jgh',
-        province: '',
-        area: '',
-        city: ''
+        goodsTypeId: '',
+        goodsTypeName: '',
+        name: '',
+        barCode: '',
+        ownerName: '',
+        ownerId: '',
+        inspectionType: '',
+        temperatureType: '',
+        bearingType: '',
+        volume: '',
+        areaId: '',
+        price: '',
+        unit: '',
+        guaranteeDay: ''
       },
       rules: {
         code: [{ required: true, message: '必填', trigger: 'blur' }],
+        goodsTypeName: [{ required: true, message: '请输入货品类型名称/货品类型编码', trigger: 'change' }, { validator: goodVali, trigger: 'change' }],
         name: [{ required: true, message: '请输入货品名称', trigger: 'blur' }],
-        personName: [
-          { required: true, message: '请输入联系人', trigger: 'blur' }
-        ],
-        phone: [
-          { required: true, message: '请输入联系电话', trigger: 'blur' },
-          {
-            pattern: /^(?:(?:\+|00)86)?1[3-9]\d{9}$/,
-            message: '请输入手机号格式',
-            trigger: 'blur'
-          }
-        ],
-        location: [
-          { required: true, message: '请输入省/市/区', trigger: 'blur' }
-        ],
-        email: [
-          { type: 'email', message: '请输入正确邮箱格式', trigger: 'blur' }
-        ]
+        barCode: [{ required: true, message: '请输入货品条码', trigger: 'blur' }],
+        ownerName: [{ required: true, message: '请输入货主', trigger: 'change' }, { validator: ownerVali, trigger: 'change' }],
+        inspectionType: [{ required: true, message: '请输入质检方式', trigger: 'blur' }],
+        temperatureType: [{ required: true, message: '请输入温度要求', trigger: 'blur' }],
+        bearingType: [{ required: true, message: '请输入承重要求', trigger: 'blur' }],
+        volume: [{ required: true, message: '请输入体积', trigger: 'blur' }]
       }
     }
   },
   watch: {},
   created() {
-    this.getOwnerDetail()
+    // this.nextCode()
+
+    this.getGoodDetail()
   },
   mounted() {
-    // setTimeout(() => {
-    //   this.isShowAddressInfo = true
-    // }, 500)
   },
   destroyed() {},
   methods: {
-    // 回显货品信息
-    async getOwnerDetail() {
-      const res = await getOwnerDetail(this.$route.params.id)
-      this.formData = res
-      // 处理回显问题 v-model中的Location 单独处理
-      res.location = res.location.split('/')
-      this.Location = []
-      this.Location[0] = TextToCode[res.location[0]].code
-      this.Location[1] = TextToCode[res.location[0]][res.location[1]].code
-      this.Location[2] = TextToCode[res.location[0]][res.location[1]][res.location[2]].code
-    },
-    handleChange(val) {
-      this.formData.province = val[0]
-      this.formData.area = val[1]
-      this.formData.city = val[2]
-      this.formData.location =
-        CodeToText[val[0]] +
-        '/' +
-        CodeToText[val[1]] +
-        '/' +
-        CodeToText[val[2]]
-    },
-    // 获取下一个编码
-    async nextCode() {
-      const res = await nextCode('HZ')
-      this.formData.code = res
-    },
-    // 修改请求
-    async editOwner() {
-      try {
-        await this.$refs.formData.validate()
-        const { id: ownerId } = await editOwner(this.formData)
-        this.ownerId = ownerId
-        this.$message.success('修改成功')
-        this.ischange = false
-      } catch (e) {
-        // this.$message.error('新增失败')
-        console.dir(e)
-      }
-    }
+    // // 回显货品信息
+    // async getOwnerDetail() {
+    //   const res = await getOwnerDetail(this.$route.params.id)
+    //   this.formData = res
+    //   // 处理回显问题 v-model中的Location 单独处理
+    //   res.location = res.location.split('/')
+    //   this.Location = []
+    //   this.Location[0] = TextToCode[res.location[0]].code
+    //   this.Location[1] = TextToCode[res.location[0]][res.location[1]].code
+    //   this.Location[2] = TextToCode[res.location[0]][res.location[1]][res.location[2]].code
+    // },
 
-    // // 新增
-    // async addowner() {
+    // 获取下一个货品编号
+    async nextCode() {
+      this.formData.code = await nextCode('HP')
+    },
+    // 货品类型建议
+    querySearchAsync1(queryString, cb) {
+      const restaurants = this.goodsTypeVagues
+      const results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants
+      clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        cb(results) // 有值则没有加载符号
+      }, 1000 * Math.random())
+    },
+    async goodsTypeVague() {
+      const res = await goodsTypeVague({ params: '' })
+      this.goodsTypeVagues = res.map(ele => {
+        ele.value = ele.name
+        return ele
+      })
+    },
+    getGoodsType(item) {
+      this.formData.goodsTypeId = item.id // 获取货品id
+    },
+
+    // 过滤器
+    createStateFilter(queryString) {
+      return (state) => {
+        return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
+      }
+    },
+    // 货主建议
+    querySearchAsync2(queryString, cb) {
+      const restaurants = this.ownerVagues
+      const results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants
+      clearTimeout(this.timeout)
+      this.timeout = setTimeout(() => {
+        cb(results) // 有值则没有加载符号
+      }, 1000 * Math.random())
+    },
+    async ownerVague() {
+      const res = await ownerVague({ params: '' })
+      this.ownerVagues = res.map(ele => {
+        ele.value = ele.name
+        return ele
+      })
+    },
+    // 获取货主货区
+    async getAllareaList(item) {
+      const res = await getAllareaList({ ownerId: item.id })
+      this.formData.ownerId = item.id
+      this.areaNameList = res
+    },
+
+    // 添加货品
+    // async addGood() {
     //   try {
     //     await this.$refs.formData.validate()
-    //     const { id: ownerId } = await addowner(this.formData)
-    //     this.ownerId = ownerId
-    //     this.$message.success('新增成功')
-    //     this.ischange = false
+    //     await addGood(this.formData)
+    //     this.$message.success('恭喜你！货品添加成功')
     //   } catch (e) {
-    //     // this.$message.error('新增失败')
     //     console.dir(e)
     //   }
     // }
+
+    // 新增
+    async editGood() {
+      try {
+        await this.$refs.formData.validate()
+        await editGood(this.formData)
+        this.$router.push('/baseInfo/goods')
+        this.$message.success('恭喜你！修改货品成功')
+      } catch (e) {
+        console.dir(e)
+      }
+    },
+    // 获取货品信息
+    async getGoodDetail() {
+      await this.goodsTypeVague()
+      await this.ownerVague()
+
+      const res = await getGoodDetail(this.$route.params.id)
+      this.goodsTypeVagues.forEach(ele => {
+        if (ele.id === res.goodsTypeId)res.goodsTypeName = ele.name
+      })
+      this.ownerVagues.forEach(ele => {
+        if (ele.id === res.ownerId)res.ownerName = ele.name
+      })
+      this.areaNameList = await getAllareaList({ ownerId: res.ownerId })
+
+      this.formData = res
+    }
   }
+
 }
 </script>
 <style lang="scss"  scoped>

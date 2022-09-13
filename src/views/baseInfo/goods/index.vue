@@ -72,16 +72,16 @@
         <el-table-column prop="guaranteeDay" label="质保天数(天)" width="140" />
         <el-table-column prop="updateTime" label="更新时间" width="250" />
         <el-table-column fixed="right" label="操作" width="180">
-          <template slot-scope="scope">
+          <template slot-scope="{row}">
             <el-button
               type="text"
               size="small"
-              @click="editOwner(scope.row)"
+              @click="editOwner(row)"
             >编辑</el-button>
             <el-button
               type="text"
               size="small"
-              @click="delGood(scope.row.id)"
+              @click="delGood(row)"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -137,14 +137,14 @@ export default {
       this.$router.push('/baseInfo/goods/details/' + row.id)
     },
     // 删除货品
-    async delGood(id) {
+    async delGood(row) {
       try {
         await this.$confirm('此操作将永久删除该货品, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
-        await delGood({ 'ids[]': id })
+        await delGood({ 'ids[]': row.id })
         this.getGoodsList()
         this.$message.success('删除货品成功')
       } catch (e) {

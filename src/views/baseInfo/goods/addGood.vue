@@ -23,14 +23,15 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item prop="goodsTypeId" label="货品类型">
+              <el-form-item prop="goodsTypeName" label="货品类型">
 
                 <el-autocomplete
-                  v-model="formData.goodsTypeId"
+                  v-model="formData.goodsTypeName"
                   clearable
                   :fetch-suggestions="querySearchAsync1"
                   placeholder="请输入"
                   suffix-icon="el-icon-search"
+                  @select="getGoodsType"
                 />
               </el-form-item>
             </el-col>
@@ -96,6 +97,7 @@
               <el-form-item prop="volume" label="体积">
                 <el-input
                   v-model="formData.volume"
+                  type="number"
                   clearable
                   placeholder="请输入"
                 />
@@ -103,8 +105,8 @@
             </el-col>
             <el-col :span="6">
               <el-form-item prop="areaName" label="指定货区">
-                <el-select v-model="formData.areaName" placeholder="请选择">
-                  <el-option v-for="(item,index) in 2" :key="index" :label="item" :value="index" />
+                <el-select v-model="formData.areaId" placeholder="请选择">
+                  <el-option v-for="(item,index) in areaNameList" :key="index" :label="item.name" :value="item.id" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -112,6 +114,7 @@
               <el-form-item prop="price" label="单价">
                 <el-input
                   v-model="formData.price"
+                  type="number"
                   clearable
                   placeholder="请输入"
                 />
@@ -133,6 +136,7 @@
               <el-form-item prop="guaranteeDay" label="质保天数">
                 <el-input
                   v-model="formData.guaranteeDay"
+                  type="number"
                   clearable
                   placeholder="请输入"
                 />
@@ -166,62 +170,72 @@
           >提交</el-button>
         </div>
       </template>
-      <!-- 分配库位 -->
-      <!-- <SetPoint v-else :owner-id="ownerId" /> -->
     </el-card>
   </div>
 </template>
 
 <script>
-import { goodsTypeVague, ownerVague, nextCode, getOwnerDetail, addGood, getAllareaList } from '@/api'
-import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
-// import SetPoint from '../component/setPoint.vue'
+import { goodsTypeVague, ownerVague, nextCode, addGood, getAllareaList } from '@/api'
 export default {
   name: 'Index',
-  // components: { SetPoint },
   props: {},
   data() {
+    const ownerVali = (rule, value, callback) => {
+      if (!this.ownerVagues.some(ele => ele.name === value)) {
+        return callback(new Error('请输入已存在的货主'))
+      } else {
+        callback()
+      }
+    }
+    const goodVali = (rule, value, callback) => {
+      if (!this.goodsTypeVagues.some(ele => ele.name === value)) {
+        return callback(new Error('请输入已存在的货品类型'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       goodsTypeVagues: [],
       ownerVagues: [],
+      areaNameList: [],
       inspectionType: { BCL: '不处理', QJ: '全检', CJ: '抽检' },
       temperatureType: { CW: '常温', LC: '冷藏', HW: '恒温' },
       bearingType: { ZX: '重型', QX: '轻型', BX: '中型' },
 
-      ownerId: '',
-      options: regionData,
       formData: {
         code: '',
-        goodsTypeId: 'hh',
-        name: '默认',
-        barCode: 'hh',
-        ownerName: '默认',
+        goodsTypeId: '',
+        goodsTypeName: '',
+        name: '',
+        barCode: '',
+        ownerName: '',
+        ownerId: '',
         inspectionType: '',
         temperatureType: '',
         bearingType: '',
-        volume: '88',
-        areaName: '',
+        volume: '',
+        areaId: '',
         price: '',
         unit: '',
-        guaranteeDay: '88'
+        guaranteeDay: ''
       },
       rules: {
         code: [{ required: true, message: '必填', trigger: 'blur' }],
-        goodsTypeId: [{ required: true, message: '请输入货品类型名称/货品类型编码', trigger: 'blur' }],
+        goodsTypeName: [{ required: true, message: '请输入货品类型名称/货品类型编码', trigger: 'change' }, { validator: goodVali, trigger: 'change' }],
         name: [{ required: true, message: '请输入货品名称', trigger: 'blur' }],
         barCode: [{ required: true, message: '请输入货品条码', trigger: 'blur' }],
-        ownerName: [{ required: true, message: '请输入货主', trigger: 'blur' }],
+        ownerName: [{ required: true, message: '请输入货主', trigger: 'change' }, { validator: ownerVali, trigger: 'change' }],
         inspectionType: [{ required: true, message: '请输入质检方式', trigger: 'blur' }],
         temperatureType: [{ required: true, message: '请输入温度要求', trigger: 'blur' }],
         bearingType: [{ required: true, message: '请输入承重要求', trigger: 'blur' }],
         volume: [{ required: true, message: '请输入体积', trigger: 'blur' }]
-
       }
     }
   },
   watch: {},
   created() {
-    // this.getOwnerDetail()
+    this.nextCode()
     this.goodsTypeVague()
     this.ownerVague()
   },
@@ -242,6 +256,10 @@ export default {
     //   this.Location[2] = TextToCode[res.location[0]][res.location[1]][res.location[2]].code
     // },
 
+    // 获取下一个货品编号
+    async nextCode() {
+      this.formData.code = await nextCode('HP')
+    },
     // 货品类型建议
     querySearchAsync1(queryString, cb) {
       const restaurants = this.goodsTypeVagues
@@ -249,7 +267,7 @@ export default {
       clearTimeout(this.timeout)
       this.timeout = setTimeout(() => {
         cb(results) // 有值则没有加载符号
-      }, 3000 * Math.random())
+      }, 1000 * Math.random())
     },
     async goodsTypeVague() {
       const res = await goodsTypeVague({ params: '' })
@@ -258,6 +276,11 @@ export default {
         return ele
       })
     },
+    getGoodsType(item) {
+      this.formData.goodsTypeId = item.id // 获取货品id
+    },
+
+    // 过滤器
     createStateFilter(queryString) {
       return (state) => {
         return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
@@ -270,7 +293,7 @@ export default {
       clearTimeout(this.timeout)
       this.timeout = setTimeout(() => {
         cb(results) // 有值则没有加载符号
-      }, 3000 * Math.random())
+      }, 1000 * Math.random())
     },
     async ownerVague() {
       const res = await ownerVague({ params: '' })
@@ -281,34 +304,19 @@ export default {
     },
     // 获取货主货区
     async getAllareaList(item) {
-      await getAllareaList({ ownerId: item.id })
+      const res = await getAllareaList({ ownerId: item.id })
+      this.formData.ownerId = item.id
+      this.areaNameList = res
     },
 
-    handleChange(val) {
-      this.formData.province = val[0]
-      this.formData.area = val[1]
-      this.formData.city = val[2]
-      this.formData.location =
-        CodeToText[val[0]] +
-        '/' +
-        CodeToText[val[1]] +
-        '/' +
-        CodeToText[val[2]]
-    },
-    // 获取下一个编码
-    async nextCode() {
-      const res = await nextCode('HZ')
-      this.formData.code = res
-    },
-    // 修改请求
+    // 添加货品
     async addGood() {
       try {
         await this.$refs.formData.validate()
-        const { id: ownerId } = await addGood(this.formData)
-        this.ownerId = ownerId
-        this.$message.success('修改成功')
+        await addGood(this.formData)
+        this.$message.success('恭喜你！货品添加成功')
+        this.$router.push('/baseInfo/goods')
       } catch (e) {
-        // this.$message.error('新增失败')
         console.dir(e)
       }
     }
