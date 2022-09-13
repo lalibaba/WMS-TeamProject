@@ -3,13 +3,6 @@
     <!-- 搜索卡片 -->
     <el-card class="elradis">
 
-      <div class="steps">
-        <el-steps :space="500">
-          <el-step :status="ischange?'process':'success'" title="基础信息" />
-          <el-step :status="ischange?'wait':'process '" title="分配库位" style="flex-basis: 100px" />
-        </el-steps>
-      </div>
-
       <!-- 基础信息 -->
       <template v-if="ischange">
         <el-form
@@ -21,7 +14,7 @@
         >
           <el-row :gutter="28">
             <el-col :span="6">
-              <el-form-item prop="code" label="货主编号" class="huozhu">
+              <el-form-item prop="code" label="货品编号" class="huozhu">
                 <el-input
                   v-model="formData.code"
                   clearable
@@ -31,7 +24,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item prop="name" label="货主名称">
+              <el-form-item prop="name" label="货品名称">
                 <el-input
                   v-model="formData.name"
                   clearable
@@ -134,7 +127,7 @@
         </div>
       </template>
       <!-- 分配库位 -->
-      <SetPoint v-else :owner-id="ownerId" />
+      <!-- <SetPoint v-else :owner-id="ownerId" /> -->
     </el-card>
   </div>
 </template>
@@ -142,10 +135,10 @@
 <script>
 import { nextCode, getOwnerDetail, editOwner } from '@/api'
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
-import SetPoint from '../component/setPoint.vue'
+// import SetPoint from '../component/setPoint.vue'
 export default {
   name: 'Index',
-  components: { SetPoint },
+  // components: { SetPoint },
   props: {},
   data() {
     return {
@@ -177,7 +170,7 @@ export default {
       },
       rules: {
         code: [{ required: true, message: '必填', trigger: 'blur' }],
-        name: [{ required: true, message: '请输入货主名称', trigger: 'blur' }],
+        name: [{ required: true, message: '请输入货品名称', trigger: 'blur' }],
         personName: [
           { required: true, message: '请输入联系人', trigger: 'blur' }
         ],
@@ -209,7 +202,7 @@ export default {
   },
   destroyed() {},
   methods: {
-    // 回显货主信息
+    // 回显货品信息
     async getOwnerDetail() {
       const res = await getOwnerDetail(this.$route.params.id)
       this.formData = res
@@ -322,19 +315,6 @@ export default {
 }
 ::v-deep .el-input {
   width: 100%;
-}
-
- ::v-deep .steps {
-     width: 600px;
-    margin: 0 auto;
-    height: 100px;
-    margin-top: 56px;
-    .el-step{
-      &:last-child{
-    flex-basis: 100px !important;
-      }
-    }
-
 }
 
 </style>

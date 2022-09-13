@@ -69,6 +69,20 @@ export const constantRoutes = [
         meta: { title: '货品管理' }
       },
       {
+        hidden: true,
+        path: 'goods/details/:id',
+        name: 'editGood',
+        component: () => import('@/views/baseInfo/goods/editGood.vue'),
+        meta: { title: '编辑货品' }
+      },
+      {
+        hidden: true,
+        path: 'goods/detail',
+        name: 'addGood',
+        component: () => import('@/views/baseInfo/goods/addGood.vue'),
+        meta: { title: '新增货品' }
+      },
+      {
         path: 'goodsType',
         name: 'goodsType',
         component: () => import('@/views/baseInfo/goodsType/index'),
