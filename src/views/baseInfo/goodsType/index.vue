@@ -91,8 +91,8 @@
         </el-form-item>
       </el-form>
       <div style="display:flex;justify-content:right;margin-top:30px">
-        <el-button type="primary" style="color:#000;margin-right:10px" round @click="colseDialog">取消</el-button>
-        <el-button round @click="YesBtn">确定</el-button>
+        <el-button style="background-color:#f8f5f5; border:none; margin-right:10px" round @click="colseDialog">取消</el-button>
+        <el-button round type="primary" @click="YesBtn">确定</el-button>
       </div>
     </el-dialog>
 

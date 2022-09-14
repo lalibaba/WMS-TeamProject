@@ -111,8 +111,8 @@
     <el-dialog :before-close="colseDialog2" :visible="isShow2" width="30%" title="确定取消提示">
       <span>确定取消分配？</span>
       <div style="display:flex;justify-content:right;margin-top:30px">
-        <el-button type="primary" style="color:#000;margin-right:10px" round @click="colseDialog2">取消</el-button>
-        <el-button round @click="delSelect">确定</el-button>
+        <el-button style="background-color:#f8f5f5; border:none; margin-right:10px" round @click="colseDialog2">取消</el-button>
+        <el-button type="primary" round @click="delSelect">确定</el-button>
       </div>
     </el-dialog>
 
