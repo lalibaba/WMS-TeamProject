@@ -87,6 +87,20 @@ export const constantRoutes = [
         meta: { title: '货品管理' }
       },
       {
+        hidden: true,
+        path: 'goods/details/:id',
+        name: 'editGood',
+        component: () => import('@/views/baseInfo/goods/editGood.vue'),
+        meta: { title: '编辑货品' }
+      },
+      {
+        hidden: true,
+        path: 'goods/detail',
+        name: 'addGood',
+        component: () => import('@/views/baseInfo/goods/addGood.vue'),
+        meta: { title: '新增货品' }
+      },
+      {
         path: 'goodsType',
         name: 'goodsType',
         component: () => import('@/views/baseInfo/goodsType/index'),
@@ -106,12 +120,37 @@ export const constantRoutes = [
         name: 'goodsOwner',
         component: () => import('@/views/business/goodsOwner/index'),
         meta: { title: '货主管理' }
+        // children: [
+        //   {
+        //   }
+        // ]
       },
       {
         path: 'taskPicking',
         name: 'taskPicking',
         component: () => import('@/views/business/taskPicking/index'),
-        meta: { title: '货运商管理' }
+        meta: { title: '承运商管理' }
+      },
+      {
+        hidden: true,
+        path: 'goodsOwner/details',
+        name: 'goodsOwnerdetails',
+        component: () => import('@/views/business/newdetails/index.vue'),
+        meta: { title: '新增货主' }
+      },
+      {
+        hidden: true,
+        path: 'goodsOwner/details/:id',
+        name: 'Ownerdetails',
+        component: () => import('@/views/business/ownerdetails/index.vue'),
+        meta: { title: '货主详情' }
+      },
+      {
+        hidden: true,
+        path: 'goodsOwner/detail/:id',
+        name: 'editdetail',
+        component: () => import('@/views/business/editdetails/index.vue'),
+        meta: { title: '编辑货主' }
       }
     ]
   },

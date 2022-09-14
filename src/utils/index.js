@@ -8,6 +8,24 @@
  * @param {string} cFormat
  * @returns {string | null}
  */
+
+// 禁用递归函数
+export function digui(arr) {
+  const Arr = []
+  arr.forEach(ele => {
+    if (ele['ownerId'] || ele.ownerId == null) {
+      ele['disable'] = true
+    } else {
+      ele['disable'] = false
+    }
+    if (ele.children) {
+      digui(ele.children)
+    }
+    Arr.push(ele)
+  })
+  return Arr
+}
+
 export function parseTime(time, cFormat) {
   if (arguments.length === 0 || !time) {
     return null
@@ -45,7 +63,7 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value] }
     return value.toString().padStart(2, '0')
   })
   return time_str
