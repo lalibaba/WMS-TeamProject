@@ -36,56 +36,63 @@
         round
         @click="addGood"
       >新增货品</el-button>
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%"
-        stripe
-        :header-cell-style="{
-          textAlign: 'center',
-          height: '44px',
-          background: '#f9f6ee',
-          padding: '0',
-          fontSize: '13px',
-        }"
-        :cell-style="{ height: '44px', padding: '0', textAlign: 'center',fontSize: '13px' }"
-      >
-        <el-table-column type="index" label="序号" width="100" />
-        <el-table-column prop="goodsTypeName" label="货品类型名称" width="160" />
-        <el-table-column prop="code" label="货品编号" width="160" />
-        <el-table-column prop="barCode" label="货品条码" width="160" />
-        <el-table-column prop="name" label="货品名称" width="160" />
-        <el-table-column prop="ownerName" label="货主名称" width="160" />
-        <el-table-column prop="inspectionType" label="质检方式" width="140">
-          <template slot-scope="{row}">{{ inspectionType[row.inspectionType] }}</template>
-        </el-table-column>
-        <el-table-column prop="temperatureType" label="温度要求" width="140">
-          <template slot-scope="{row}">{{ temperatureType[row.temperatureType] }}</template>
-        </el-table-column>
-        <el-table-column prop="bearingType" label="承重要求" width="140">
-          <template slot-scope="{row}">{{ bearingType[row.bearingType] }}</template>
-        </el-table-column>
-        <el-table-column prop="areaName" label="指定货区" width="140" />
-        <el-table-column prop="volume" label="体积m3" width="140" />
-        <el-table-column prop="price" label="单价(元)" width="140" />
-        <el-table-column prop="unit" label="单位" width="140" />
-        <el-table-column prop="guaranteeDay" label="质保天数(天)" width="140" />
-        <el-table-column prop="updateTime" label="更新时间" width="250" />
-        <el-table-column fixed="right" label="操作" width="180">
-          <template slot-scope="{row}">
-            <el-button
-              type="text"
-              size="small"
-              @click="editOwner(row)"
-            >编辑</el-button>
-            <el-button
-              type="text"
-              size="small"
-              @click="delGood(row)"
-            >删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <el-scrollbar>
+        <!-- 滚动条要包裹的内容 -->
+        <div>
+          <el-table
+            :data="tableData"
+            border
+            style="width: 100%"
+            stripe
+            :header-cell-style="{
+              textAlign: 'center',
+              height: '44px',
+              background: '#f9f6ee',
+              padding: '0',
+              fontSize: '13px',
+            }"
+            :cell-style="{ height: '44px', padding: '0', textAlign: 'center',fontSize: '13px' }"
+          >
+            <el-table-column type="index" label="序号" width="100" />
+            <el-table-column prop="goodsTypeName" label="货品类型名称" width="160" />
+            <el-table-column prop="code" label="货品编号" width="160" />
+            <el-table-column prop="barCode" label="货品条码" width="160" />
+            <el-table-column prop="name" label="货品名称" width="160" />
+            <el-table-column prop="ownerName" label="货主名称" width="160" />
+            <el-table-column prop="inspectionType" label="质检方式" width="140">
+              <template slot-scope="{row}">{{ inspectionType[row.inspectionType] }}</template>
+            </el-table-column>
+            <el-table-column prop="temperatureType" label="温度要求" width="140">
+              <template slot-scope="{row}">{{ temperatureType[row.temperatureType] }}</template>
+            </el-table-column>
+            <el-table-column prop="bearingType" label="承重要求" width="140">
+              <template slot-scope="{row}">{{ bearingType[row.bearingType] }}</template>
+            </el-table-column>
+            <el-table-column prop="areaName" label="指定货区" width="140" />
+            <el-table-column prop="volume" label="体积m3" width="140" />
+            <el-table-column prop="price" label="单价(元)" width="140" />
+            <el-table-column prop="unit" label="单位" width="140" />
+            <el-table-column prop="guaranteeDay" label="质保天数(天)" width="140" />
+            <el-table-column prop="updateTime" label="更新时间" width="250" />
+            <el-table-column fixed="right" label="操作" width="180">
+              <template slot-scope="{row}">
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="editOwner(row)"
+                >编辑</el-button>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="delGood(row)"
+                >删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+
+        </div>
+      </el-scrollbar>
+
       <!-- 分页组件 -->
       <div style="display: flex; justify-content: center; margin: 20px 0">
         <el-pagination
@@ -198,7 +205,24 @@ export default {
 }
 </script>
 
-<style   scoped>
+<style lang="scss"  scoped>
+
+  .scrollbar {
+    overflow-x: auto;
+
+    &::-webkit-scrollbar-track-piece {
+      background: #d3dce6;
+    }
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #99a9bf;
+      border-radius: 20px;
+    }
+  }
 .container {
   margin: 20px 30px 30px 30px;
 }

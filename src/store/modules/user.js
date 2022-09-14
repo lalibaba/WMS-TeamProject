@@ -27,7 +27,7 @@ const actions = {
   // user logout
   logout({ commit, state }) {
     removeToken() // 移除本地token
-    resetRouter()
+    commit('SET_TOKEN', '')
     // commit('RESET_STATE')
   }
 
