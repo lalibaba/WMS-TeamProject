@@ -62,6 +62,7 @@
               <el-select
                 v-model="formdetails.warehouseId"
                 placeholder="请选择仓库"
+                clearable
                 @visible-change="visiblechange"
               >
                 <el-option
@@ -296,6 +297,8 @@ export default {
         this.isshow = false
       } else {
         this.$router.push('/storageIn/storageInList')
+        this.active++
+        this.isshow = true
       }
     },
     // 返回按钮
@@ -461,6 +464,9 @@ export default {
   display: inline-block;
   background: url('../../../../assets/404_images/empty4300e933.png') no-repeat;
   background-size: contain;
+}
+.el-form-item__content .el-select{
+  width: 100%;
 }
 /deep/ .box .el-table th{
   text-align: center;

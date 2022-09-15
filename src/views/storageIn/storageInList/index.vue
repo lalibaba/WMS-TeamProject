@@ -99,7 +99,7 @@
             >
               <template slot-scope="scope">
                 <el-button v-show="scope.row.status !== '新建'" type="text" size="small" @click="handleClick(scope.row.id)">查看详细</el-button>
-                <el-button v-show="scope.row.status === '新建'" type="text" size="small" @click="editClick(scope.row.id)">修改详情</el-button>
+                <el-button v-show="scope.row.status === '新建'" type="text" size="small" @click="editClick(scope.row)">修改详情</el-button>
                 <el-button v-show="scope.row.status === '新建'" type="text" size="small" @click="delclick(scope.row)">取消</el-button>
                 <el-button v-show="scope.row.status === '新建'" type="text" size="small">生成收货任务</el-button>
               </template>
@@ -145,6 +145,13 @@ export default {
   created() {
     this.getstorageinlist()
   },
+  beforeRouteUpdate(to, from, next) {
+    console.log(to, from, next)
+    // 在当前路由改变，但是该组件被复用时调用
+    // 举例来说，对于一个带有动态参数的路径 /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候，
+    // 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
+    // 可以访问组件实例 `this`
+  },
   methods: {
     // 分页查询入库单明细
     async getstorageinlist() {
@@ -177,12 +184,12 @@ export default {
       })
     },
     // 修改详情
-    editClick(id) {
-      console.log(id)
+    editClick(row) {
       this.$router.push({
         path: '/storageIn/storageInList/details',
         query: {
-          id: id
+          id: row.id,
+          ownerId: row.ownerId
         }
       })
     },

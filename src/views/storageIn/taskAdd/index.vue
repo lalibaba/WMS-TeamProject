@@ -1,84 +1,86 @@
 <template>
   <div class="main-box">
-    <search :input1="'上架编号'" :input2="'入库单号'" :input3="'货主名称'" />
-    <div class="content-box">
-      <tablecomponent>
+    <search
+      :input1="'上架编号'"
+      :input2="'入库单号'"
+      :input3="'货主名称'"
+      @search="searchfn"
+      @reset="searchfn"
+    />
+    <div class="box">
+      <tablecomponent :tablelist="groundinglist">
         <template v-slot:table>
-          <el-table-column
-            type="selection"
-            width="50"
-          />
           <el-table-column
             type="index"
             label="序号"
             width="50"
           />
           <el-table-column
-            prop="name"
-            label="收货任务编号"
-            width="120"
+            prop="code"
+            label="上架任务编号"
+            width="160"
           />
           <el-table-column
-            prop="province"
+            prop="receiptCode"
             label="入库单号"
-            width="120"
+            width="160"
           />
           <el-table-column
-            prop="city"
-            label="创建人"
-            width="120"
-          />
-          <el-table-column
-            prop="address"
+            prop="createTime"
             label="创建时间"
-            width="120"
+            width="160"
             sortable
           />
           <el-table-column
-            prop="zip"
+            prop="ownerName"
             label="货主名称"
-            width="120"
+            width="160"
             sortable
           />
           <el-table-column
-            prop="zip"
+            prop="warehouseName"
             label="仓库名称"
-            width="120"
+            width="160"
           />
           <el-table-column
-            prop="zip"
+            prop="areaName"
             label="库区名称"
-            width="120"
+            width="160"
           />
           <el-table-column
-            prop="zip"
-            label="预计到货数"
-            width="120"
+            prop="personName"
+            label="负责人"
+            width="160"
           />
           <el-table-column
-            prop="zip"
-            label="收获状态"
-            width="120"
+            prop="status"
+            label="上架状态"
+            width="160"
           />
           <el-table-column
-            prop="zip"
-            label="收货人"
-            width="120"
+            prop="planNum"
+            label="货品数量"
+            width="160"
           />
           <el-table-column
-            prop="zip"
+            prop="realNum"
             label="实收总数"
-            width="120"
+            width="160"
           />
           <el-table-column
-            prop="zip"
-            label="收获差异"
-            width="120"
+            prop="groundingNum"
+            label="上架数量"
+            width="160"
           />
           <el-table-column
-            prop="zip"
+            prop="differenceNum"
+            label="差异总数"
+            width="160"
+          />
+          <el-table-column
+            prop="completionTime"
             label="收货完成时间"
-            width="120"
+            width="160"
           />
           <el-table-column
             fixed="right"
@@ -86,12 +88,12 @@
             width="250"
           >
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="godetails(scope.row)">查看详细</el-button>
+              <el-button type="text" size="small" @click="godetails(scope.row.masterId)">查看详细</el-button>
             </template>
           </el-table-column>
         </template>
       </tablecomponent>
-      <mypage1 />
+      <mypage1 :total="total" />
     </div>
   </div>
 </template>
@@ -100,6 +102,7 @@
 import search from '@/components/storageIn/search'
 import tablecomponent from '@/components/storageIn/table1'
 import mypage1 from '@/components/storageIn/mypage1'
+import { groundingpageDetail, receiptListpageDetail } from '@/api/storageIn'
 export default {
   name: 'TaskReceive',
   components: {
@@ -112,20 +115,45 @@ export default {
   },
   data() {
     return {
-
+      groundinglist: [],
+      options: {
+        code: '',
+        receiptCode: '',
+        ownerName: '',
+        current: 1,
+        size: 10
+      },
+      total: 0
     }
   },
   watch: {
 
   },
   mounted() {
-
+    this.groundingpageDetail()
   },
   destroyed() {
   },
   methods: {
-    godetails() {
+    // 查看详细
+    async godetails(masterId) {
+      const res = await receiptListpageDetail({ masterId: masterId })
+      console.log(res)
+      this.$store.dispatch('storageIn/groundingDetail', res)
       this.$router.push('/storageIn/taskAdd/details')
+    },
+    // 查询上架任务
+    async groundingpageDetail() {
+      const res = await groundingpageDetail({ ...this.options })
+      this.groundinglist = res.records
+      this.total = parseInt(res.total)
+    },
+    searchfn(value) {
+      console.log(value)
+      this.options.code = value.value1
+      this.options.receiptCode = value.value2
+      this.options.ownerName = value.value3
+      this.groundingpageDetail()
     }
   }
 }

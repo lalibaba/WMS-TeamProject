@@ -6,7 +6,7 @@
       :input3="'收货状态'"
       :isinput3="false"
       @search="searchfn"
-      @reset="searchfn"
+      @reset="resetfn"
     />
     <div class="content-box">
       <div class="box-top">
@@ -66,9 +66,11 @@
               width="160"
             />
             <el-table-column
-              prop="status"
+              prop="statusname"
               label="收获状态"
               width="160"
+              :filters="receivingstatus"
+              :filter-method="filterhandle"
             />
             <el-table-column
               prop="receiverName"
@@ -89,11 +91,12 @@
               prop="completionTime"
               label="收货完成时间"
               width="160"
+              sortable
             />
             <el-table-column
               fixed="right"
               label="操作"
-              width="100"
+              width="250"
             >
               <template slot-scope="scope">
                 <el-button type="text" size="small" @click="godetails(scope.row.masterId)">查看详细</el-button>
@@ -102,7 +105,9 @@
           </template>
         </tablecomponent>
       </div>
-      <mypage1 :total="total" />
+      <div class="pagebox">
+        <mypage1 :total="total" />
+      </div>
     </div>
   </div>
 </template>
@@ -132,7 +137,25 @@ export default {
         current: 1,
         size: 10
       },
-      status: ''
+      status: '',
+      receivingstatus: [
+        {
+          value: 1,
+          text: '待分配'
+        },
+        {
+          value: 2,
+          text: '收货中'
+        },
+        {
+          value: 3,
+          text: '收货完成'
+        },
+        {
+          value: 4,
+          text: '已取消'
+        }
+      ]
     }
   },
   watch: {
@@ -143,6 +166,18 @@ export default {
   destroyed() {
   },
   methods: {
+    // 往对象里加statusname属性,值为代表状态的数字对应的中文
+    changestatus(data) {
+      const statusname = 'statusname'
+      data.forEach(ele => {
+        this.receivingstatus.forEach(item => {
+          if (item.value === ele.status) {
+            ele[statusname] = item.text
+          }
+        })
+      })
+      return data
+    },
     // 查看详细
     async godetails(masterId) {
       const res = await receiptListpageDetail({ masterId: masterId })
@@ -153,17 +188,36 @@ export default {
     // 查询收货任务
     async receivingPageDetail() {
       const res = await receivingPageDetail({ ...this.options })
-      this.receivinglist = res.records
+      this.receivinglist = this.changestatus(res.records)
+      // this.receivinglist = res.records
+      console.log(this.receivinglist)
       this.total = parseInt(res.total)
-      console.log(res)
     },
     // 搜索功能
-    searchfn(value) {
+    async searchfn(value) {
       console.log(value)
       this.options.code = value.value1
       this.options.ownerName = value.value2
       this.status = value.value3
+      const res = await receivingPageDetail({ ...this.options, status: this.status })
+      this.receivinglist = this.changestatus(res.records)
+      // this.receivinglist = res.records
+      console.log(this.receivinglist)
+      this.total = parseInt(res.total)
+    },
+    // 重置
+    resetfn() {
+      this.options.code = ''
+      this.options.ownerName = ''
+      this.status = ''
       this.receivingPageDetail()
+    },
+    // 状态筛选过滤器
+    filterhandle(value, row, column) {
+      console.log(value)
+      console.log(row)
+      console.log(column)
+      return row.status === value
     }
   }
 }
@@ -193,7 +247,14 @@ export default {
   letter-spacing: 0px;
   text-align: center;
 }
-
+.pagebox{
+  padding-top: 18px;
+  padding-bottom: 34px;
+}
+/deep/ .el-table--scrollable-x .el-table__body-wrapper {
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
 /deep/ .box .el-table th{
   text-align: center;
   background-color: #f8f5f5;

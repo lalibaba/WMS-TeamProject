@@ -20,6 +20,7 @@
             <el-select
               v-model="searchdata.value3"
               placeholder="请选择"
+              clearable
               @change="change"
             >
               <el-option

@@ -145,3 +145,20 @@ export function receivingpageDetail(params) {
     baseurl: process.env.VUE_APP_BASE_IPS
   })
 }
+
+// 分页查询上架任务明细
+export function groundingpageDetail(params) {
+  return request({
+    url: '/grounding/pageDetail',
+    params,
+    baseurl: process.env.VUE_APP_BASE_IPS
+  })
+}
+
+// 查询合计信息
+export function receiptListsum(masterId) {
+  return request({
+    url: `/receiptList/sum/${masterId}`,
+    baseurl: process.env.VUE_APP_BASE_IPS
+  })
+}
